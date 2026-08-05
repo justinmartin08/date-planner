@@ -8,11 +8,12 @@ interface ThemeMascotAnimationProps {
 }
 
 export function ThemeMascotAnimation({ theme }: ThemeMascotAnimationProps) {
+  const [mounted, setMounted] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [showFire, setShowFire] = useState(false);
 
-  // Auto trigger pokeball open entrance animation on load for pokemon theme
   useEffect(() => {
+    setMounted(true);
     if (theme === 'pokemon') {
       const timer1 = setTimeout(() => setIsOpen(true), 400);
       const timer2 = setTimeout(() => setShowFire(true), 900);
@@ -22,6 +23,8 @@ export function ThemeMascotAnimation({ theme }: ThemeMascotAnimationProps) {
       };
     }
   }, [theme]);
+
+  if (!mounted) return null;
 
   if (theme === 'tiger') {
     return (

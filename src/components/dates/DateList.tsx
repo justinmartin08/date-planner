@@ -91,27 +91,63 @@ export function DateList({ currentUser }: { currentUser: UserSession }) {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-[var(--bg-card)] p-6 rounded-2xl border border-[var(--border-color)]">
-        <div>
-          <h2 className="text-lg font-semibold text-[var(--text-primary)] tracking-tight flex items-center gap-2">
-            <Calendar className="w-5 h-5 text-[var(--accent)]" />
-            Date Planner
-          </h2>
-          <p className="text-xs text-[var(--text-muted)] mt-1">
-            Plan and confirm what&apos;s next, together.
-          </p>
-        </div>
+      {/* Theme Hero Banner */}
+      <div className={`relative overflow-hidden p-6 sm:p-8 rounded-2xl border transition-all shadow-2xl ${
+        currentUser.theme === 'tiger'
+          ? 'bg-gradient-to-r from-[#1E130B] via-[#2A180C] to-[#160E08] border-[#FF6B00]/40 shadow-[0_10px_30px_rgba(255,107,0,0.15)]'
+          : 'bg-gradient-to-r from-[#0B1A2E] via-[#0D243F] to-[#071324] border-[#00B0FF]/40 shadow-[0_10px_30px_rgba(0,176,255,0.15)]'
+      }`}>
+        {/* Background Visual Effects */}
+        {currentUser.theme === 'tiger' ? (
+          <div className="absolute inset-0 opacity-10 bg-[repeating-linear-gradient(135deg,#FF6B00_0px,#FF6B00_15px,transparent_15px,transparent_30px)] pointer-events-none" />
+        ) : (
+          <div className="absolute -right-10 -top-10 w-64 h-64 bg-[#00B0FF]/15 rounded-full blur-3xl pointer-events-none animate-pulse" />
+        )}
 
-        <button
-          onClick={() => {
-            setEditingDate(null);
-            setIsModalOpen(true);
-          }}
-          className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white font-medium text-sm transition-colors"
-        >
-          <Plus className="w-4 h-4" />
-          Plan a Date
-        </button>
+        <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+          <div className="flex items-center gap-4">
+            <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 border shadow-lg ${
+              currentUser.theme === 'tiger'
+                ? 'bg-[#FF6B00]/20 border-[#FF6B00]/40 text-[#FF9E00]'
+                : 'bg-[#00B0FF]/20 border-[#00B0FF]/40 text-[#00E5FF]'
+            }`}>
+              {currentUser.theme === 'tiger' ? (
+                <TigerIcon className="w-8 h-8 animate-bounce" />
+              ) : (
+                <ElectricSparkIcon className="w-8 h-8 animate-pulse" />
+              )}
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className={`text-[11px] font-bold px-2.5 py-0.5 rounded-full border uppercase tracking-wider ${
+                  currentUser.theme === 'tiger'
+                    ? 'bg-[#FF6B00]/20 border-[#FF6B00]/30 text-[#FF9E00]'
+                    : 'bg-[#00B0FF]/20 border-[#00B0FF]/30 text-[#00E5FF]'
+                }`}>
+                  {currentUser.theme === 'tiger' ? '🐅 Yani\'s Tiger Realm' : '⚡ Mega Charizard X'}
+                </span>
+              </div>
+              <h2 className="text-xl font-bold text-[var(--text-primary)] tracking-tight mt-1 flex items-center gap-2">
+                <Calendar className="w-5 h-5 text-[var(--accent)]" />
+                Date Planner
+              </h2>
+              <p className="text-xs text-[var(--text-muted)] mt-0.5">
+                Plan, confirm, and cherish romantic moments together.
+              </p>
+            </div>
+          </div>
+
+          <button
+            onClick={() => {
+              setEditingDate(null);
+              setIsModalOpen(true);
+            }}
+            className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white font-semibold text-sm transition-all shadow-lg shadow-[var(--accent)]/30 hover:scale-[1.02] active:scale-[0.98] shrink-0"
+          >
+            <Plus className="w-4 h-4" />
+            Plan a Date
+          </button>
+        </div>
       </div>
 
       <div className="flex items-center gap-2 overflow-x-auto pb-1">

@@ -57,35 +57,48 @@ export function ProfileSettingsModal({
 
     const reader = new FileReader();
     reader.onload = () => {
-      const img = new Image();
-      img.src = reader.result as string;
-      img.onload = () => {
-        const maxDim = 1200;
-        let width = img.width;
-        let height = img.height;
+      try {
+        const rawData = reader.result as string;
+        const img = new Image();
+        img.onload = () => {
+          try {
+            const maxDim = 1200;
+            let width = img.width || 800;
+            let height = img.height || 800;
 
-        if (width > maxDim || height > maxDim) {
-          if (width > height) {
-            height = Math.round((height * maxDim) / width);
-            width = maxDim;
-          } else {
-            width = Math.round((width * maxDim) / height);
-            height = maxDim;
+            if (width > maxDim || height > maxDim) {
+              if (width > height) {
+                height = Math.round((height * maxDim) / width);
+                width = maxDim;
+              } else {
+                width = Math.round((width * maxDim) / height);
+                height = maxDim;
+              }
+            }
+
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            if (ctx) {
+              ctx.drawImage(img, 0, 0, width, height);
+              setCropperImageSrc(canvas.toDataURL('image/jpeg', 0.9));
+            } else {
+              setCropperImageSrc(rawData);
+            }
+          } catch {
+            setCropperImageSrc(rawData);
           }
-        }
-
-        const canvas = document.createElement('canvas');
-        canvas.width = width;
-        canvas.height = height;
-        const ctx = canvas.getContext('2d');
-        if (ctx) {
-          ctx.drawImage(img, 0, 0, width, height);
-          setCropperImageSrc(canvas.toDataURL('image/jpeg', 0.9));
-        } else {
-          setCropperImageSrc(reader.result as string);
-        }
-        setCropperOpen(true);
-      };
+          setCropperOpen(true);
+        };
+        img.onerror = () => {
+          setCropperImageSrc(rawData);
+          setCropperOpen(true);
+        };
+        img.src = rawData;
+      } catch (err: unknown) {
+        setProfileError('Failed to read image file.');
+      }
     };
     reader.readAsDataURL(file);
     e.target.value = '';
