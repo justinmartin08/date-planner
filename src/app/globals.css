@@ -93,32 +93,90 @@ body {
   background: var(--bg-card-hover) !important;
 }
 
+/* Custom Bespoke Spring & Fluid Physics Animations */
+@keyframes modalEnter {
+  0% {
+    opacity: 0;
+    backdrop-filter: blur(0px);
+  }
+  100% {
+    opacity: 1;
+    backdrop-filter: blur(8px);
+  }
+}
+.animate-modalEnter {
+  animation: modalEnter 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes scaleUp {
+  0% {
+    opacity: 0;
+    transform: scale(0.93) translateY(8px);
+  }
+  60% {
+    transform: scale(1.01) translateY(-1px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+.animate-scaleUp {
+  animation: scaleUp 0.38s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
 @keyframes fadeIn {
-  from { opacity: 0; transform: scale(0.98); }
-  to { opacity: 1; transform: scale(1); }
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 .animate-fadeIn {
-  animation: fadeIn 0.18s ease-out;
+  animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @keyframes shake {
   0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-4px); }
-  75% { transform: translateX(4px); }
+  20% { transform: translateX(-5px); }
+  40% { transform: translateX(5px); }
+  60% { transform: translateX(-3px); }
+  80% { transform: translateX(3px); }
 }
 .animate-shake {
-  animation: shake 0.3s ease-in-out;
+  animation: shake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+}
+
+/* Fluid interactive card & button transitions */
+.interactive-card {
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), 
+              box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1), 
+              border-color 0.3s ease;
+}
+.interactive-card:hover {
+  transform: translateY(-3px) scale(1.005);
+  box-shadow: 0 12px 30px -10px var(--accent-glow);
+  border-color: var(--accent-soft);
+}
+
+.interactive-btn {
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), 
+              background-color 0.2s ease, 
+              box-shadow 0.2s ease;
+}
+.interactive-btn:hover {
+  transform: translateY(-1px) scale(1.02);
+}
+.interactive-btn:active {
+  transform: translateY(0) scale(0.98);
 }
 
 /* Theme Micro-Animations */
 @keyframes electricPulse {
   0%, 100% { box-shadow: 0 0 0 0 rgba(43, 127, 214, 0); }
-  50% { box-shadow: 0 0 12px 2px rgba(43, 127, 214, 0.22); }
+  50% { box-shadow: 0 0 16px 3px rgba(43, 127, 214, 0.28); }
 }
 
 @keyframes emberShimmer {
   0%, 100% { box-shadow: 0 0 0 0 rgba(232, 114, 12, 0); }
-  50% { box-shadow: 0 0 14px 2px rgba(232, 114, 12, 0.24); }
+  50% { box-shadow: 0 0 18px 3px rgba(232, 114, 12, 0.30); }
 }
 
 [data-theme='pokemon'] .theme-card-glow {

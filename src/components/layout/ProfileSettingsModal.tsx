@@ -3,6 +3,7 @@
 import React, { useState, useRef } from 'react';
 import { UserSession } from '@/lib/types';
 import { TigerIcon, ElectricSparkIcon } from '../ui/Motifs';
+import { ImageCropperModal } from '../ui/ImageCropperModal';
 import { X, Upload, User, Lock, Check, Loader2, Camera } from 'lucide-react';
 
 interface ProfileSettingsModalProps {
@@ -43,21 +44,34 @@ export function ProfileSettingsModal({
 
   const isTiger = user.theme === 'tiger';
 
-  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Avatar cropper state
+  const [cropperOpen, setCropperOpen] = useState(false);
+  const [cropperImageSrc, setCropperImageSrc] = useState('');
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    const reader = new FileReader();
+    reader.onload = () => {
+      setCropperImageSrc(reader.result as string);
+      setCropperOpen(true);
+    };
+    reader.readAsDataURL(file);
+    // Reset file input value so selecting the same file works
+    e.target.value = '';
+  };
+
+  const handleCroppedAvatarUpload = async (croppedBase64: string) => {
     setUploading(true);
     setProfileError('');
     setProfileSuccess('');
 
     try {
-      const formData = new FormData();
-      formData.append('file', file);
-
       const res = await fetch('/api/user/avatar', {
         method: 'POST',
-        body: formData,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ avatarBase64: croppedBase64 }),
       });
 
       const data = await res.json();
@@ -67,7 +81,7 @@ export function ProfileSettingsModal({
 
       setAvatarUrl(data.avatarUrl);
       onUserUpdate(data.user);
-      setProfileSuccess('Avatar updated successfully!');
+      setProfileSuccess('Avatar cropped & updated successfully!');
     } catch (err: unknown) {
       setProfileError(err instanceof Error ? err.message : 'Failed to upload image.');
     } finally {
@@ -214,7 +228,7 @@ export function ProfileSettingsModal({
                   <input
                     type="file"
                     ref={fileInputRef}
-                    onChange={handleAvatarUpload}
+                    onChange={handleFileSelect}
                     accept="image/*"
                     className="hidden"
                   />
@@ -370,6 +384,14 @@ export function ProfileSettingsModal({
           </form>
         )}
       </div>
+
+      {/* Interactive Avatar Cropper Modal */}
+      <ImageCropperModal
+        isOpen={cropperOpen}
+        imageSrc={cropperImageSrc}
+        onClose={() => setCropperOpen(false)}
+        onCropComplete={handleCroppedAvatarUpload}
+      />
     </div>
   );
 }
