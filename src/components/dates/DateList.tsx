@@ -105,27 +105,14 @@ export function DateList({ currentUser }: { currentUser: UserSession }) {
         )}
 
         <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-5">
-          <div className="flex items-center gap-4">
-            <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 border shadow-md ${
-              currentUser.theme === 'tiger'
-                ? 'bg-[#FF5500]/15 border-[#FF5500]/30 text-[#FF5500]'
-                : 'bg-[#2563EB]/15 border-[#2563EB]/30 text-[#3B82F6]'
-            }`}>
-              {currentUser.theme === 'tiger' ? (
-                <TigerClawMark className="w-7 h-7" />
-              ) : (
-                <ElectricSparkIcon className="w-7 h-7" />
-              )}
-            </div>
-            <div>
-              <h2 className="text-xl font-bold text-white tracking-tight flex items-center gap-2">
-                <Calendar className="w-5 h-5 text-[var(--accent)]" />
-                Date Planner
-              </h2>
-              <p className="text-xs text-[var(--text-muted)] mt-0.5">
-                Plan and confirm what&apos;s next, together.
-              </p>
-            </div>
+          <div>
+            <h2 className="text-xl font-bold text-white tracking-tight flex items-center gap-2">
+              <Calendar className="w-5 h-5 text-[var(--accent)]" />
+              Date Planner
+            </h2>
+            <p className="text-xs text-[var(--text-muted)] mt-0.5">
+              Plan and confirm what&apos;s next, together.
+            </p>
           </div>
 
           <button

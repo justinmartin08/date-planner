@@ -54,14 +54,14 @@ export function Navigation({
             className="flex items-center gap-3 min-w-0 group hover:opacity-90 transition-opacity text-left"
             title="Manage profile & settings"
           >
-            <div className="relative w-9 h-9 rounded-xl overflow-hidden bg-[var(--badge-bg)] border border-[var(--border-color)] group-hover:border-[var(--accent)] transition-colors flex items-center justify-center shrink-0">
+            <div className="relative w-9.5 h-9.5 rounded-full overflow-hidden bg-[var(--badge-bg)] border-2 border-[var(--accent)] flex items-center justify-center shrink-0 shadow-sm transition-transform group-hover:scale-105">
               {user.avatarUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={user.avatarUrl} alt={user.displayName} className="w-full h-full object-cover" />
+                <img src={user.avatarUrl} alt={user.displayName} className="w-full h-full object-cover rounded-full" />
               ) : isTiger ? (
-                <TigerIcon className="w-5 h-5 text-[#E8720C]" />
+                <TigerIcon className="w-5 h-5 text-[#FF5500]" />
               ) : (
-                <ElectricSparkIcon className="w-5 h-5 text-[#2B7FD6]" />
+                <ElectricSparkIcon className="w-5 h-5 text-[#2563EB]" />
               )}
             </div>
             <div className="min-w-0">
