@@ -52,13 +52,42 @@ export function ProfileSettingsModal({
     const file = e.target.files?.[0];
     if (!file) return;
 
+    setProfileError('');
+    setProfileSuccess('');
+
     const reader = new FileReader();
     reader.onload = () => {
-      setCropperImageSrc(reader.result as string);
-      setCropperOpen(true);
+      const img = new Image();
+      img.src = reader.result as string;
+      img.onload = () => {
+        const maxDim = 1200;
+        let width = img.width;
+        let height = img.height;
+
+        if (width > maxDim || height > maxDim) {
+          if (width > height) {
+            height = Math.round((height * maxDim) / width);
+            width = maxDim;
+          } else {
+            width = Math.round((width * maxDim) / height);
+            height = maxDim;
+          }
+        }
+
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+          ctx.drawImage(img, 0, 0, width, height);
+          setCropperImageSrc(canvas.toDataURL('image/jpeg', 0.9));
+        } else {
+          setCropperImageSrc(reader.result as string);
+        }
+        setCropperOpen(true);
+      };
     };
     reader.readAsDataURL(file);
-    // Reset file input value so selecting the same file works
     e.target.value = '';
   };
 

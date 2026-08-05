@@ -8,6 +8,7 @@ import { ThemeProvider } from '@/components/layout/ThemeProvider';
 import { Navigation } from '@/components/layout/Navigation';
 import { DateList } from '@/components/dates/DateList';
 import { LetterThread } from '@/components/messages/MessageThread';
+import { ThemeMascotAnimation } from '@/components/ui/ThemeMascotAnimation';
 import { ThemePatternBg } from '@/components/ui/Motifs';
 import { Loader2 } from 'lucide-react';
 
@@ -67,6 +68,8 @@ export default function DashboardPage() {
             <LetterThread currentUser={user} />
           )}
         </main>
+
+        <ThemeMascotAnimation theme={user.theme} />
       </div>
     </ThemeProvider>
   );

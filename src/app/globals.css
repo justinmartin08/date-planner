@@ -25,26 +25,34 @@
     --font-heading: 'Outfit', sans-serif;
   }
 
-  /* Yani: Orange & Tiger Theme */
+  /* Yani: Orange & Tiger Theme 🐅 */
   [data-theme='tiger'] {
-    --border-glow: #E8720C;
-    --accent: #E8720C;
-    --accent-hover: #C95F09;
-    --accent-soft: rgba(232, 114, 12, 0.12);
-    --accent-glow: rgba(232, 114, 12, 0.18);
-    --badge-bg: rgba(232, 114, 12, 0.10);
-    --badge-text: #F0985A;
+    --bg-main: #0F0B08;
+    --bg-card: #18120D;
+    --bg-card-hover: #221811;
+    --border-color: #382415;
+    --border-glow: #FF6B00;
+    --accent: #FF6B00;
+    --accent-hover: #E05C00;
+    --accent-soft: rgba(255, 107, 0, 0.16);
+    --accent-glow: rgba(255, 158, 0, 0.25);
+    --badge-bg: rgba(255, 107, 0, 0.12);
+    --badge-text: #FFA552;
   }
 
-  /* Cielo: Blue & Pokémon Theme */
+  /* Cielo: Pokémon Mega Charizard X Theme ⚡🔥 */
   [data-theme='pokemon'] {
-    --border-glow: #2B7FD6;
-    --accent: #2B7FD6;
-    --accent-hover: #2569B0;
-    --accent-soft: rgba(43, 127, 214, 0.12);
-    --accent-glow: rgba(43, 127, 214, 0.18);
-    --badge-bg: rgba(43, 127, 214, 0.10);
-    --badge-text: #6FA8E0;
+    --bg-main: #060D17;
+    --bg-card: #0D1726;
+    --bg-card-hover: #132136;
+    --border-color: #1B2F4A;
+    --border-glow: #00B0FF;
+    --accent: #00B0FF;
+    --accent-hover: #0088CC;
+    --accent-soft: rgba(0, 176, 255, 0.16);
+    --accent-glow: rgba(0, 229, 255, 0.26);
+    --badge-bg: rgba(0, 176, 255, 0.12);
+    --badge-text: #60A5FA;
   }
 }
 

@@ -170,7 +170,7 @@ export function ImageCropperModal({
 
     ctx.restore();
 
-    const croppedBase64 = outputCanvas.toDataURL('image/png', 0.92);
+    const croppedBase64 = outputCanvas.toDataURL('image/jpeg', 0.85);
     onCropComplete(croppedBase64);
     onClose();
   };

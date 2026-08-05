@@ -1,36 +1,49 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 💖 Cielo & Yani — Date Planner & Letters
 
-## Getting Started
+A private, full-stack couples space for **Cielo & Yani** to organize dates, send rich-text letters & voice notes, track memory locations on interactive maps, and customize themed experiences.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## ✨ Features
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- 📅 **Interactive Date Planner**: Propose, accept, decline, and track romantic dates with map coordinates & location pins.
+- 💌 **Private Letter Box**: Send encrypted rich-text letters, file attachments, and recorded voice notes.
+- 🎨 **Dynamic Couple Themes**:
+  - **Yani (Tiger Theme)**: Warm ember orange palette with tiger stripe textures, ambient glow, and tiger motifs.
+  - **Cielo (Pokémon Theme)**: Electric Mega Charizard X theme with blue fire particles, Pokéball entrance animations, and custom badges.
+- 📸 **Custom Avatar Cropper**: Built-in HTML5 canvas cropper with drag-to-pan, zoom slider, 90° rotation, and cloud database storage.
+- 📱 **Universal Device Support**: Fully responsive across mobile, tablet, and desktop viewports.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🚀 Tech Stack
 
-## Learn More
+- **Framework**: Next.js (App Router & Turbopack)
+- **Database**: PostgreSQL (Supabase Cloud DB) with Prisma ORM
+- **Authentication**: JWT Cookie Sessions with bcrypt hashing
+- **Styling**: Tailwind CSS & Vanilla CSS Design System Tokens
+- **Maps**: Leaflet / React-Leaflet
+- **Deployment**: Vercel Cloud Hosting (24/7 Uptime)
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🛠️ Local Development
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. Clone the repository and install dependencies:
+   ```bash
+   git clone https://github.com/justinmartin08/date-planner.git
+   cd date-planner
+   npm install
+   ```
 
-## Deploy on Vercel
+2. Synchronize database & seed initial users:
+   ```bash
+   npx prisma db push
+   npm run db:seed
+   ```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+3. Launch development server:
+   ```bash
+   npm run dev
+   ```
+   Open `http://localhost:3000` in your browser.
