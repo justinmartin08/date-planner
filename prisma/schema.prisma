@@ -1,0 +1,64 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id               String         @id @default(cuid())
+  username         String         @unique
+  passwordHash     String
+  displayName      String
+  avatarUrl        String?
+  theme            String         // "tiger" or "pokemon"
+  createdAt        DateTime       @default(now())
+  createdProposals DateProposal[] @relation("CreatedProposals")
+  sentMessages     Message[]      @relation("SentMessages")
+  receivedMessages Message[]      @relation("ReceivedMessages")
+}
+
+model DateProposal {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  dateTime    DateTime
+  location    String?
+  locationLat Float?
+  locationLng Float?
+  status      String   @default("PROPOSED") // PROPOSED, CONFIRMED, DECLINED, COMPLETED
+  creatorId   String
+  creator     User     @relation("CreatedProposals", fields: [creatorId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Message {
+  id          String       @id @default(cuid())
+  senderId    String
+  sender      User         @relation("SentMessages", fields: [senderId], references: [id])
+  recipientId String
+  recipient   User         @relation("ReceivedMessages", fields: [recipientId], references: [id])
+  title       String?
+  content     String
+  contentHtml String? // rich-text (bold/italic/alignment/links) as sanitized HTML
+  isRead      Boolean      @default(false)
+  readAt      DateTime?
+  createdAt   DateTime     @default(now())
+  attachments Attachment[]
+}
+
+model Attachment {
+  id        String   @id @default(cuid())
+  messageId String
+  message   Message  @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  kind      String // "file" | "voice"
+  url       String // path under /uploads
+  fileName  String
+  mimeType  String
+  size      Int
+  duration  Int? // seconds, for voice notes
+  createdAt DateTime @default(now())
+}

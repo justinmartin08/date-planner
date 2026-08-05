@@ -1,0 +1,66 @@
+import { NextResponse } from 'next/server';
+import { getSession, setSessionCookie } from '@/lib/auth';
+import { prisma } from '@/lib/db';
+import { UserTheme } from '@/lib/types';
+import { writeFile, mkdir } from 'fs/promises';
+import path from 'path';
+
+export async function POST(request: Request) {
+  const session = await getSession();
+  if (!session) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  try {
+    const formData = await request.formData();
+    const file = formData.get('file') as File | null;
+
+    if (!file) {
+      return NextResponse.json({ error: 'No image file provided.' }, { status: 400 });
+    }
+
+    if (!file.type.startsWith('image/')) {
+      return NextResponse.json({ error: 'Uploaded file must be an image.' }, { status: 400 });
+    }
+
+    const bytes = await file.arrayBuffer();
+    const buffer = Buffer.from(bytes);
+
+    const uploadsDir = path.join(process.cwd(), 'public', 'uploads', 'avatars');
+    await mkdir(uploadsDir, { recursive: true });
+
+    const ext = file.name.split('.').pop() || 'png';
+    const fileName = `avatar-${session.id}-${Date.now()}.${ext}`;
+    const filePath = path.join(uploadsDir, fileName);
+
+    await writeFile(filePath, buffer);
+    const avatarUrl = `/uploads/avatars/${fileName}`;
+
+    const updatedUser = await prisma.user.update({
+      where: { id: session.id },
+      data: { avatarUrl },
+      select: {
+        id: true,
+        username: true,
+        displayName: true,
+        avatarUrl: true,
+        theme: true,
+      },
+    });
+
+    const newSession = {
+      id: updatedUser.id,
+      username: updatedUser.username,
+      displayName: updatedUser.displayName,
+      avatarUrl: updatedUser.avatarUrl,
+      theme: updatedUser.theme as UserTheme,
+    };
+
+    await setSessionCookie(newSession, true);
+
+    return NextResponse.json({ user: updatedUser, avatarUrl });
+  } catch (error) {
+    console.error('Error uploading avatar:', error);
+    return NextResponse.json({ error: 'Failed to upload avatar image.' }, { status: 500 });
+  }
+}

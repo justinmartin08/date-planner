@@ -1,0 +1,206 @@
+'use client';
+
+import React, { useEffect, useRef, useState, useCallback } from 'react';
+import { MapPin, Search, Loader2, X } from 'lucide-react';
+import type { Map as LeafletMap, Marker as LeafletMarker } from 'leaflet';
+
+export interface PickedLocation {
+  address: string;
+  lat: number;
+  lng: number;
+}
+
+interface LocationPickerProps {
+  value: PickedLocation | null;
+  onChange: (loc: PickedLocation | null) => void;
+}
+
+// Default center: kept generic (no hardcoded home address). Falls back to
+// a world-ish view; a device geolocation prompt narrows it if allowed.
+const DEFAULT_CENTER: [number, number] = [14.5, 121.0];
+const DEFAULT_ZOOM = 12;
+
+export function LocationPicker({ value, onChange }: LocationPickerProps) {
+  const mapRef = useRef<HTMLDivElement | null>(null);
+  const leafletMapRef = useRef<LeafletMap | null>(null);
+  const markerRef = useRef<LeafletMarker | null>(null);
+  const [ready, setReady] = useState(false);
+  const [query, setQuery] = useState('');
+  const [searching, setSearching] = useState(false);
+  const [searchError, setSearchError] = useState('');
+
+  const reverseGeocode = useCallback(async (lat: number, lng: number) => {
+    try {
+      const res = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}`,
+        { headers: { Accept: 'application/json' } }
+      );
+      const data = await res.json();
+      const address: string = data?.display_name || `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+      onChange({ address, lat, lng });
+    } catch {
+      onChange({ address: `${lat.toFixed(5)}, ${lng.toFixed(5)}`, lat, lng });
+    }
+  }, [onChange]);
+
+  const placeMarker = useCallback((L: typeof import('leaflet'), lat: number, lng: number) => {
+    const map = leafletMapRef.current;
+    if (!map) return;
+    if (markerRef.current) {
+      markerRef.current.setLatLng([lat, lng]);
+    } else {
+      markerRef.current = L.marker([lat, lng], { draggable: true }).addTo(map);
+      markerRef.current.on('dragend', () => {
+        const pos = markerRef.current!.getLatLng();
+        reverseGeocode(pos.lat, pos.lng);
+      });
+    }
+    map.panTo([lat, lng]);
+  }, [reverseGeocode]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    (async () => {
+      const L = await import('leaflet');
+      if (cancelled || !mapRef.current || leafletMapRef.current) return;
+
+      // Fix Leaflet marker icon URLs under Next.js bundler
+      delete (L.Icon.Default.prototype as unknown as { _getIconUrl?: unknown })._getIconUrl;
+      L.Icon.Default.mergeOptions({
+        iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+        iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+        shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+      });
+
+      const start: [number, number] = value ? [value.lat, value.lng] : DEFAULT_CENTER;
+
+      const map = L.map(mapRef.current, {
+        center: start,
+        zoom: value ? 15 : DEFAULT_ZOOM,
+        zoomControl: true,
+      });
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors',
+        maxZoom: 19,
+      }).addTo(map);
+
+      leafletMapRef.current = map;
+
+      if (value) {
+        placeMarker(L, value.lat, value.lng);
+      }
+
+      map.on('click', (e: import('leaflet').LeafletMouseEvent) => {
+        const { lat, lng } = e.latlng;
+        placeMarker(L, lat, lng);
+        reverseGeocode(lat, lng);
+      });
+
+      setReady(true);
+    })();
+
+    return () => {
+      cancelled = true;
+      leafletMapRef.current?.remove();
+      leafletMapRef.current = null;
+      markerRef.current = null;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleSearch = async (e?: React.SyntheticEvent) => {
+    if (e) e.preventDefault();
+    if (!query.trim() || !leafletMapRef.current) return;
+    setSearching(true);
+    setSearchError('');
+    try {
+      const res = await fetch(
+        `https://nominatim.openstreetmap.org/search?format=jsonv2&q=${encodeURIComponent(query)}&limit=1`,
+        { headers: { Accept: 'application/json' } }
+      );
+      const results = await res.json();
+      if (!results?.length) {
+        setSearchError('No matching place found. Try a different search.');
+        return;
+      }
+      const { lat, lon, display_name } = results[0];
+      const L = await import('leaflet');
+      const latNum = parseFloat(lat);
+      const lngNum = parseFloat(lon);
+      placeMarker(L, latNum, lngNum);
+      leafletMapRef.current.setView([latNum, lngNum], 16);
+      onChange({ address: display_name, lat: latNum, lng: lngNum });
+    } catch {
+      setSearchError('Search failed. Please try again.');
+    } finally {
+      setSearching(false);
+    }
+  };
+
+  const handleClear = () => {
+    if (markerRef.current && leafletMapRef.current) {
+      leafletMapRef.current.removeLayer(markerRef.current);
+      markerRef.current = null;
+    }
+    onChange(null);
+  };
+
+  return (
+    <div className="space-y-2">
+      <div className="relative">
+        <Search className="w-4 h-4 text-[var(--text-muted)] absolute left-3 top-1/2 -translate-y-1/2" />
+        <input
+          type="text"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              handleSearch(e);
+            }
+          }}
+          placeholder="Search a place, or click the map"
+          className="w-full pl-9 pr-20 py-2.5 rounded-lg bg-[var(--bg-main)] border border-[var(--border-color)] text-[var(--text-primary)] focus:outline-none focus:border-[var(--accent)] text-sm transition-colors"
+        />
+        <button
+          type="button"
+          onClick={handleSearch}
+          disabled={searching}
+          className="absolute right-1.5 top-1.5 px-3 py-1 rounded-md bg-[var(--accent)] text-white text-xs font-medium disabled:opacity-50"
+        >
+          {searching ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : 'Find'}
+        </button>
+      </div>
+
+      {searchError && <p className="text-xs text-rose-400">{searchError}</p>}
+
+      <div className="map-picker relative rounded-lg overflow-hidden border border-[var(--border-color)]">
+        <div ref={mapRef} className="w-full h-56" />
+        {!ready && (
+          <div className="absolute inset-0 flex items-center justify-center bg-[var(--bg-main)] text-[var(--text-muted)] text-xs gap-2">
+            <Loader2 className="w-4 h-4 animate-spin" /> Loading map…
+          </div>
+        )}
+      </div>
+
+      {value ? (
+        <div className="flex items-start gap-2 p-2.5 rounded-lg bg-[var(--accent-soft)] border border-[var(--border-color)]">
+          <MapPin className="w-3.5 h-3.5 text-[var(--accent)] mt-0.5 shrink-0" />
+          <span className="text-xs text-[var(--text-primary)] flex-1 leading-snug">{value.address}</span>
+          <button
+            type="button"
+            onClick={handleClear}
+            className="text-[var(--text-muted)] hover:text-[var(--text-primary)] shrink-0"
+            title="Clear location"
+          >
+            <X className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      ) : (
+        <p className="text-[11px] text-[var(--text-muted)]">Click the map or search to drop a pin (optional).</p>
+      )}
+    </div>
+  );
+}
