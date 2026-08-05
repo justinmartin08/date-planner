@@ -71,9 +71,6 @@ export function LetterThread({ currentUser }: { currentUser: UserSession }) {
             <Mail className="w-5 h-5 text-[var(--accent)]" />
             Letters
           </h2>
-          <p className="text-xs text-[var(--text-muted)] mt-1">
-            Private letters between {currentUser.displayName} and {partnerName}.
-          </p>
         </div>
 
         <button

@@ -97,28 +97,45 @@ export function DateList({ currentUser }: { currentUser: UserSession }) {
           ? 'bg-gradient-to-r from-[#141210] via-[#1E1A16] to-[#141210] border-[#FF5500]/30 shadow-[0_8px_25px_rgba(255,85,0,0.12)]'
           : 'bg-gradient-to-r from-[#0F1C2E] via-[#172840] to-[#0F1C2E] border-[#2563EB]/30 shadow-[0_8px_25px_rgba(37,99,235,0.12)]'
       }`}>
-        {/* Background Visual Texture & Accents */}
+        {/* Background Visual Accents */}
         {currentUser.theme === 'tiger' ? (
-          <div className="absolute right-4 top-2 opacity-15 text-[#FF5500] pointer-events-none flex items-center gap-2">
-            <TigerClawMark className="w-20 h-20 transform rotate-12" />
-            <TigerPawEmblem className="w-12 h-12" />
+          <div className="absolute right-6 top-1/2 -translate-y-1/2 opacity-20 text-[#FF5500] pointer-events-none flex items-center gap-3">
+            <TigerClawMark className="w-16 h-16 transform rotate-12" />
           </div>
         ) : (
-          <div className="absolute right-4 top-2 opacity-20 text-[#2563EB] pointer-events-none flex items-center gap-3">
-            <PokeballEmblem className="w-16 h-16 animate-pulse" />
-            <StrawberryEmblem className="w-12 h-12" />
+          <div className="absolute right-6 top-1/2 -translate-y-1/2 opacity-25 text-[#2563EB] pointer-events-none flex items-center gap-3">
+            <PokeballEmblem className="w-14 h-14 animate-pulse" />
           </div>
         )}
 
         <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-5">
-          <div>
-            <h2 className="text-xl font-bold text-white tracking-tight flex items-center gap-2">
-              <Calendar className="w-5 h-5 text-[var(--accent)]" />
-              Date Planner
-            </h2>
-            <p className="text-xs text-[var(--text-muted)] mt-0.5">
-              Plan and confirm what&apos;s next, together.
-            </p>
+          <div className="flex items-center gap-3">
+            <div className={`p-2.5 rounded-xl border flex items-center justify-center shrink-0 shadow-md ${
+              currentUser.theme === 'tiger'
+                ? 'bg-[#FF5500]/15 border-[#FF5500]/30 text-[#FF5500]'
+                : 'bg-[#2563EB]/15 border-[#2563EB]/30 text-[#2563EB]'
+            }`}>
+              {currentUser.theme === 'tiger' ? (
+                <TigerPawEmblem className="w-6 h-6 animate-pulse" />
+              ) : (
+                <PokeballEmblem className="w-6 h-6" />
+              )}
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-white tracking-tight flex items-center gap-2">
+                Date Planner
+                {currentUser.theme === 'pokemon' && (
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-[#FF2D55]/15 text-[#FF2D55] border border-[#FF2D55]/25">
+                    <StrawberryEmblem className="w-3.5 h-3.5" />
+                  </span>
+                )}
+                {currentUser.theme === 'tiger' && (
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-[#FF5500]/15 text-[#FF5500] border border-[#FF5500]/25">
+                    <TigerClawMark className="w-3.5 h-3.5" />
+                  </span>
+                )}
+              </h2>
+            </div>
           </div>
 
           <button
