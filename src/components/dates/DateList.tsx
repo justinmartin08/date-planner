@@ -6,7 +6,7 @@ import { DateProposalItem, UserSession } from '@/lib/types';
 import { DateCard } from './DateCard';
 import { DateModal } from './DateModal';
 import { Plus, Calendar, Filter } from 'lucide-react';
-import { TigerIcon, ElectricSparkIcon, TigerClawMark } from '@/components/ui/Motifs';
+import { PokeballEmblem, StrawberryEmblem, TigerPawEmblem, TigerClawMark } from '@/components/ui/Motifs';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
@@ -97,10 +97,16 @@ export function DateList({ currentUser }: { currentUser: UserSession }) {
           ? 'bg-gradient-to-r from-[#141210] via-[#1E1A16] to-[#141210] border-[#FF5500]/30 shadow-[0_8px_25px_rgba(255,85,0,0.12)]'
           : 'bg-gradient-to-r from-[#0F1C2E] via-[#172840] to-[#0F1C2E] border-[#2563EB]/30 shadow-[0_8px_25px_rgba(37,99,235,0.12)]'
       }`}>
-        {/* Background Visual Texture */}
-        {currentUser.theme === 'tiger' && (
-          <div className="absolute right-4 top-2 opacity-15 text-[#FF5500] pointer-events-none">
-            <TigerClawMark className="w-24 h-24 transform rotate-12" />
+        {/* Background Visual Texture & Accents */}
+        {currentUser.theme === 'tiger' ? (
+          <div className="absolute right-4 top-2 opacity-15 text-[#FF5500] pointer-events-none flex items-center gap-2">
+            <TigerClawMark className="w-20 h-20 transform rotate-12" />
+            <TigerPawEmblem className="w-12 h-12" />
+          </div>
+        ) : (
+          <div className="absolute right-4 top-2 opacity-20 text-[#2563EB] pointer-events-none flex items-center gap-3">
+            <PokeballEmblem className="w-16 h-16 animate-pulse" />
+            <StrawberryEmblem className="w-12 h-12" />
           </div>
         )}
 
@@ -170,9 +176,9 @@ export function DateList({ currentUser }: { currentUser: UserSession }) {
         <div className="flex flex-col items-center justify-center p-12 text-center bg-[var(--bg-card)]/50 border border-dashed border-[var(--border-color)] rounded-2xl">
           <div className="p-3 rounded-full bg-[var(--badge-bg)] text-[var(--accent)] mb-3">
             {currentUser.theme === 'tiger' ? (
-              <TigerIcon className="w-6 h-6 text-[#E8720C]" />
+              <TigerPawEmblem className="w-6 h-6 text-[#FF5500]" />
             ) : (
-              <ElectricSparkIcon className="w-6 h-6 text-[#2B7FD6]" />
+              <PokeballEmblem className="w-6 h-6 text-[#2563EB]" />
             )}
           </div>
           <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-1">

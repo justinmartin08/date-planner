@@ -1,20 +1,80 @@
 import React from 'react';
 
-/**
- * Custom emblem for Tiger theme (Yani - Orange & Tiger 🐅)
- */
-export function TigerIcon({ className = 'w-6 h-6' }: { className?: string }) {
+/** Bespoke Pokémon Pokéball Emblem (Cielo Theme) */
+export function PokeballEmblem({ className = 'w-6 h-6' }: { className?: string }) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" className={className} xmlns="http://www.w3.org/2000/svg">
-      <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.5" />
-      <path
-        d="M6.5 9.5c1.8-1 3-1 5.5-1s3.7 0 5.5 1M6.5 12.5c1.8-1 3-1 5.5-1s3.7 0 5.5 1M7.5 15.5c1.4-.7 2.4-.7 4.5-.7s3.1 0 4.5.7"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-      />
+    <svg viewBox="0 0 40 40" fill="none" className={className} xmlns="http://www.w3.org/2000/svg">
+      {/* Outer Shell */}
+      <circle cx="20" cy="20" r="18" stroke="currentColor" strokeWidth="3" />
+      {/* Top Half Fill */}
+      <path d="M 2 20 A 18 18 0 0 1 38 20 Z" fill="currentColor" opacity="0.2" />
+      {/* Center Line */}
+      <line x1="2" y1="20" x2="38" y2="20" stroke="currentColor" strokeWidth="3" />
+      {/* Outer Button Ring */}
+      <circle cx="20" cy="20" r="6" fill="var(--bg-card, #0F1C2E)" stroke="currentColor" strokeWidth="3" />
+      {/* Inner Glowing Button */}
+      <circle cx="20" cy="20" r="2.5" fill="currentColor" className="animate-pulse" />
     </svg>
   );
+}
+
+/** Bespoke Strawberry Emblem (Cielo Theme - Loves Strawberries) */
+export function StrawberryEmblem({ className = 'w-6 h-6' }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 40 40" fill="none" className={className} xmlns="http://www.w3.org/2000/svg">
+      {/* Strawberry Body */}
+      <path
+        d="M20 36C27 30 33 22 33 14C33 8.5 28.5 6 23.5 7C22 7.3 20.9 8.2 20 9C19.1 8.2 18 7.3 16.5 7C11.5 6 7 8.5 7 14C7 22 13 30 20 36Z"
+        fill="#FF2D55"
+        stroke="#E00034"
+        strokeWidth="2"
+      />
+      {/* Green Stem Leaf */}
+      <path
+        d="M20 7C18 3 14 3 13 5C15 6.5 17 7.5 20 7Z"
+        fill="#34C759"
+      />
+      <path
+        d="M20 7C22 3 26 3 27 5C25 6.5 23 7.5 20 7Z"
+        fill="#34C759"
+      />
+      <path
+        d="M20 7C20 2 20 1 20 1"
+        stroke="#34C759"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+      {/* Strawberry Seeds */}
+      <circle cx="14" cy="14" r="1" fill="#FFCC00" />
+      <circle cx="20" cy="16" r="1" fill="#FFCC00" />
+      <circle cx="26" cy="14" r="1" fill="#FFCC00" />
+      <circle cx="16" cy="22" r="1" fill="#FFCC00" />
+      <circle cx="24" cy="22" r="1" fill="#FFCC00" />
+      <circle cx="20" cy="28" r="1" fill="#FFCC00" />
+    </svg>
+  );
+}
+
+/** Bespoke Tiger Paw Emblem (Yani Theme) */
+export function TigerPawEmblem({ className = 'w-6 h-6' }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 40 40" fill="none" className={className} xmlns="http://www.w3.org/2000/svg">
+      {/* Main Pad */}
+      <path
+        d="M20 35C26 35 30 30 30 24C30 20 26 18 20 20C14 18 10 20 10 24C10 30 14 35 20 35Z"
+        fill="currentColor"
+      />
+      {/* Toe Pads */}
+      <circle cx="10" cy="13" r="3.5" fill="currentColor" />
+      <circle cx="17" cy="8" r="3.8" fill="currentColor" />
+      <circle cx="23" cy="8" r="3.8" fill="currentColor" />
+      <circle cx="30" cy="13" r="3.5" fill="currentColor" />
+    </svg>
+  );
+}
+
+export function TigerIcon(props: { className?: string }) {
+  return <TigerPawEmblem {...props} />;
 }
 
 /** Tiger Claw Mark slash accent */
