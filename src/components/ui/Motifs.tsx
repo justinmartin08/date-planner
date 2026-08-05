@@ -1,50 +1,36 @@
-import React from 'react';
-
-/** Bespoke Pokémon Pokéball Emblem (Cielo Theme) */
+/** Classic Red & White Pokémon Pokéball Emblem */
 export function PokeballEmblem({ className = 'w-6 h-6' }: { className?: string }) {
   return (
     <svg viewBox="0 0 40 40" fill="none" className={className} xmlns="http://www.w3.org/2000/svg">
-      {/* Outer Shell */}
-      <circle cx="20" cy="20" r="18" stroke="currentColor" strokeWidth="3" />
-      {/* Top Half Fill */}
-      <path d="M 2 20 A 18 18 0 0 1 38 20 Z" fill="currentColor" opacity="0.2" />
-      {/* Center Line */}
-      <line x1="2" y1="20" x2="38" y2="20" stroke="currentColor" strokeWidth="3" />
+      {/* Outer Circle Ring */}
+      <circle cx="20" cy="20" r="18" stroke="#1E293B" strokeWidth="2.5" />
+      {/* Top Red Half */}
+      <path d="M 2 20 A 18 18 0 0 1 38 20 Z" fill="#EF4444" />
+      {/* Bottom White Half */}
+      <path d="M 2 20 A 18 18 0 0 0 38 20 Z" fill="#FFFFFF" />
+      {/* Center Black Line */}
+      <line x1="2" y1="20" x2="38" y2="20" stroke="#1E293B" strokeWidth="2.5" />
       {/* Outer Button Ring */}
-      <circle cx="20" cy="20" r="6" fill="var(--bg-card, #0F1C2E)" stroke="currentColor" strokeWidth="3" />
-      {/* Inner Glowing Button */}
-      <circle cx="20" cy="20" r="2.5" fill="currentColor" className="animate-pulse" />
+      <circle cx="20" cy="20" r="5.5" fill="#FFFFFF" stroke="#1E293B" strokeWidth="2.5" />
+      {/* Inner Button */}
+      <circle cx="20" cy="20" r="2.5" fill="#1E293B" />
     </svg>
   );
 }
 
-/** Bespoke Strawberry Emblem (Cielo Theme - Loves Strawberries) */
+/** Bespoke Strawberry Emblem */
 export function StrawberryEmblem({ className = 'w-6 h-6' }: { className?: string }) {
   return (
     <svg viewBox="0 0 40 40" fill="none" className={className} xmlns="http://www.w3.org/2000/svg">
-      {/* Strawberry Body */}
       <path
         d="M20 36C27 30 33 22 33 14C33 8.5 28.5 6 23.5 7C22 7.3 20.9 8.2 20 9C19.1 8.2 18 7.3 16.5 7C11.5 6 7 8.5 7 14C7 22 13 30 20 36Z"
         fill="#FF2D55"
         stroke="#E00034"
         strokeWidth="2"
       />
-      {/* Green Stem Leaf */}
-      <path
-        d="M20 7C18 3 14 3 13 5C15 6.5 17 7.5 20 7Z"
-        fill="#34C759"
-      />
-      <path
-        d="M20 7C22 3 26 3 27 5C25 6.5 23 7.5 20 7Z"
-        fill="#34C759"
-      />
-      <path
-        d="M20 7C20 2 20 1 20 1"
-        stroke="#34C759"
-        strokeWidth="2"
-        strokeLinecap="round"
-      />
-      {/* Strawberry Seeds */}
+      <path d="M20 7C18 3 14 3 13 5C15 6.5 17 7.5 20 7Z" fill="#34C759" />
+      <path d="M20 7C22 3 26 3 27 5C25 6.5 23 7.5 20 7Z" fill="#34C759" />
+      <path d="M20 7C20 2 20 1 20 1" stroke="#34C759" strokeWidth="2" strokeLinecap="round" />
       <circle cx="14" cy="14" r="1" fill="#FFCC00" />
       <circle cx="20" cy="16" r="1" fill="#FFCC00" />
       <circle cx="26" cy="14" r="1" fill="#FFCC00" />
@@ -55,20 +41,20 @@ export function StrawberryEmblem({ className = 'w-6 h-6' }: { className?: string
   );
 }
 
-/** Bespoke Tiger Paw Emblem (Yani Theme) */
+/** Anatomical Tiger Paw Print (4 Distinct Oval Toe Pads + Main Pad) */
 export function TigerPawEmblem({ className = 'w-6 h-6' }: { className?: string }) {
   return (
     <svg viewBox="0 0 40 40" fill="none" className={className} xmlns="http://www.w3.org/2000/svg">
-      {/* Main Pad */}
+      {/* 4 Distinct Oval Toe Pads */}
+      <ellipse cx="8" cy="14" rx="2.8" ry="4" transform="rotate(-25 8 14)" fill="currentColor" />
+      <ellipse cx="15.5" cy="9" rx="3" ry="4.5" transform="rotate(-8 15.5 9)" fill="currentColor" />
+      <ellipse cx="24.5" cy="9" rx="3" ry="4.5" transform="rotate(8 24.5 9)" fill="currentColor" />
+      <ellipse cx="32" cy="14" rx="2.8" ry="4" transform="rotate(25 32 14)" fill="currentColor" />
+      {/* Main Bottom Heel Pad */}
       <path
-        d="M20 35C26 35 30 30 30 24C30 20 26 18 20 20C14 18 10 20 10 24C10 30 14 35 20 35Z"
+        d="M 12 25 C 12 21 16 19 20 19 C 24 19 28 21 28 25 C 28 31 24 34 20 34 C 16 34 12 31 12 25 Z"
         fill="currentColor"
       />
-      {/* Toe Pads */}
-      <circle cx="10" cy="13" r="3.5" fill="currentColor" />
-      <circle cx="17" cy="8" r="3.8" fill="currentColor" />
-      <circle cx="23" cy="8" r="3.8" fill="currentColor" />
-      <circle cx="30" cy="13" r="3.5" fill="currentColor" />
     </svg>
   );
 }
@@ -77,14 +63,18 @@ export function TigerIcon(props: { className?: string }) {
   return <TigerPawEmblem {...props} />;
 }
 
-/** Tiger Claw Mark slash accent */
+/** Sharp Diagonal 4-Slash Tiger Scratch Marks (Real Scratch) */
 export function TigerClawMark({ className = 'w-6 h-6' }: { className?: string }) {
   return (
-    <svg viewBox="0 0 40 40" fill="none" className={className} xmlns="http://www.w3.org/2000/svg">
-      <path d="M9 6C13 14 11 26 7 34" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
-      <path d="M19 4C23 14 21 28 16 36" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" />
-      <path d="M29 7C32 16 30 27 25 35" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
-      <path d="M37 10C39 18 37 26 33 32" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" opacity="0.8" />
+    <svg viewBox="0 0 50 50" fill="none" className={className} xmlns="http://www.w3.org/2000/svg">
+      {/* Slash 1 */}
+      <path d="M 8 5 Q 16 22 22 45 Q 15 28 8 5 Z" fill="currentColor" />
+      {/* Slash 2 */}
+      <path d="M 18 3 Q 27 23 32 47 Q 25 29 18 3 Z" fill="currentColor" />
+      {/* Slash 3 */}
+      <path d="M 29 4 Q 37 24 41 46 Q 35 28 29 4 Z" fill="currentColor" />
+      {/* Slash 4 */}
+      <path d="M 39 8 Q 44 24 47 42 Q 43 27 39 8 Z" fill="currentColor" />
     </svg>
   );
 }
