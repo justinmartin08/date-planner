@@ -110,7 +110,7 @@ export function Navigation({
                 if (typeof window !== 'undefined' && 'Notification' in window) {
                   Notification.requestPermission().then((permission) => {
                     if (permission === 'granted') {
-                      new Notification('Notifications Active 🔔', {
+                      new Notification('Notifications Active', {
                         body: 'You will receive alerts for new letters and date plans!',
                       });
                     }
