@@ -143,12 +143,6 @@ export function ImageCropperModal({
     ctx.imageSmoothingEnabled = true;
     ctx.imageSmoothingQuality = 'high';
 
-    // Circular clipping mask
-    ctx.beginPath();
-    ctx.arc(outSize / 2, outSize / 2, outSize / 2, 0, Math.PI * 2);
-    ctx.closePath();
-    ctx.clip();
-
     const previewSize = 300;
     const ratio = outSize / previewSize;
 

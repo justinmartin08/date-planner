@@ -85,11 +85,18 @@ export function MessageCard({ message, currentUser, onMarkRead }: MessageCardPro
       <div className="flex items-center justify-between gap-3 mb-4 pb-3 border-b border-white/10">
         <div className="flex items-center gap-2.5">
           <div
-            className={`w-7 h-7 rounded-full flex items-center justify-center border ${
-              senderIsTiger ? 'bg-[#E8720C]/15 border-[#E8720C]/30 text-[#E8720C]' : 'bg-[#2B7FD6]/15 border-[#2B7FD6]/30 text-[#2B7FD6]'
+            className={`w-8 h-8 rounded-full overflow-hidden flex items-center justify-center border shrink-0 ${
+              senderIsTiger ? 'bg-[#FF5500]/15 border-[#FF5500]/30 text-[#FF5500]' : 'bg-[#2563EB]/15 border-[#2563EB]/30 text-[#3B82F6]'
             }`}
           >
-            {senderIsTiger ? <TigerIcon className="w-3.5 h-3.5" /> : <ElectricSparkIcon className="w-3.5 h-3.5" />}
+            {message.sender.avatarUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={message.sender.avatarUrl} alt={message.sender.displayName} className="w-full h-full object-cover" />
+            ) : senderIsTiger ? (
+              <TigerIcon className="w-4 h-4" />
+            ) : (
+              <ElectricSparkIcon className="w-4 h-4" />
+            )}
           </div>
           <div>
             <div className="font-semibold text-sm text-[var(--text-primary)] flex items-center gap-1.5">

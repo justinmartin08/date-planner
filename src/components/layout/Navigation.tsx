@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useTheme } from './ThemeProvider';
 import { TigerIcon, ElectricSparkIcon } from '../ui/Motifs';
 import { ProfileSettingsModal } from './ProfileSettingsModal';
-import { LogOut, Calendar, Mail, User } from 'lucide-react';
+import { LogOut, Calendar, Mail, User, Bell } from 'lucide-react';
 import { UserSession } from '@/lib/types';
 
 interface NavigationProps {
@@ -105,6 +105,23 @@ export function Navigation({
 
           {/* User Controls */}
           <div className="flex items-center gap-2 shrink-0">
+            <button
+              onClick={() => {
+                if (typeof window !== 'undefined' && 'Notification' in window) {
+                  Notification.requestPermission().then((permission) => {
+                    if (permission === 'granted') {
+                      new Notification('Notifications Active 🔔', {
+                        body: 'You will receive alerts for new letters and date plans!',
+                      });
+                    }
+                  });
+                }
+              }}
+              className="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-[var(--text-muted)] hover:text-[var(--accent)] transition-colors"
+              title="Enable Device Notifications"
+            >
+              <Bell className="w-4 h-4" />
+            </button>
             <button
               onClick={() => setIsSettingsOpen(true)}
               className="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors"
