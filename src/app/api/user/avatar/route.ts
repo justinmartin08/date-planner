@@ -25,16 +25,9 @@ export async function POST(request: Request) {
 
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
-
-    const uploadsDir = path.join(process.cwd(), 'public', 'uploads', 'avatars');
-    await mkdir(uploadsDir, { recursive: true });
-
-    const ext = file.name.split('.').pop() || 'png';
-    const fileName = `avatar-${session.id}-${Date.now()}.${ext}`;
-    const filePath = path.join(uploadsDir, fileName);
-
-    await writeFile(filePath, buffer);
-    const avatarUrl = `/uploads/avatars/${fileName}`;
+    const mimeType = file.type || 'image/png';
+    const base64Data = buffer.toString('base64');
+    const avatarUrl = `data:${mimeType};base64,${base64Data}`;
 
     const updatedUser = await prisma.user.update({
       where: { id: session.id },
