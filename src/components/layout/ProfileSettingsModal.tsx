@@ -38,15 +38,15 @@ export function ProfileSettingsModal({
   const [passwordError, setPasswordError] = useState('');
   const [passwordSuccess, setPasswordSuccess] = useState('');
 
+  // Avatar cropper state
+  const [cropperOpen, setCropperOpen] = useState(false);
+  const [cropperImageSrc, setCropperImageSrc] = useState('');
+
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   if (!isOpen) return null;
 
   const isTiger = user.theme === 'tiger';
-
-  // Avatar cropper state
-  const [cropperOpen, setCropperOpen] = useState(false);
-  const [cropperImageSrc, setCropperImageSrc] = useState('');
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];

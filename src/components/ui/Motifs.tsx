@@ -17,6 +17,18 @@ export function TigerIcon({ className = 'w-6 h-6' }: { className?: string }) {
   );
 }
 
+/** Tiger Claw Mark slash accent */
+export function TigerClawMark({ className = 'w-6 h-6' }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 40 40" fill="none" className={className} xmlns="http://www.w3.org/2000/svg">
+      <path d="M9 6C13 14 11 26 7 34" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+      <path d="M19 4C23 14 21 28 16 36" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" />
+      <path d="M29 7C32 16 30 27 25 35" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+      <path d="M37 10C39 18 37 26 33 32" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" opacity="0.8" />
+    </svg>
+  );
+}
+
 /**
  * Custom emblem for Pokémon theme (Cielo - Blue & Pokémon ⚡)
  * A geometric electric spark star emblem replacing the Pokéball icon.

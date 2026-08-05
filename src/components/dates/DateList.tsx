@@ -6,7 +6,7 @@ import { DateProposalItem, UserSession } from '@/lib/types';
 import { DateCard } from './DateCard';
 import { DateModal } from './DateModal';
 import { Plus, Calendar, Filter } from 'lucide-react';
-import { TigerIcon, ElectricSparkIcon } from '@/components/ui/Motifs';
+import { TigerIcon, ElectricSparkIcon, TigerClawMark } from '@/components/ui/Motifs';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
@@ -91,48 +91,39 @@ export function DateList({ currentUser }: { currentUser: UserSession }) {
 
   return (
     <div className="space-y-6">
-      {/* Theme Hero Banner */}
-      <div className={`relative overflow-hidden p-6 sm:p-8 rounded-2xl border transition-all shadow-2xl ${
+      {/* Sleek Theme Hero Banner */}
+      <div className={`relative overflow-hidden p-6 sm:p-7 rounded-2xl border transition-all shadow-xl ${
         currentUser.theme === 'tiger'
-          ? 'bg-gradient-to-r from-[#1E130B] via-[#2A180C] to-[#160E08] border-[#FF6B00]/40 shadow-[0_10px_30px_rgba(255,107,0,0.15)]'
-          : 'bg-gradient-to-r from-[#0B1A2E] via-[#0D243F] to-[#071324] border-[#00B0FF]/40 shadow-[0_10px_30px_rgba(0,176,255,0.15)]'
+          ? 'bg-gradient-to-r from-[#141210] via-[#1E1A16] to-[#141210] border-[#FF5500]/30 shadow-[0_8px_25px_rgba(255,85,0,0.12)]'
+          : 'bg-gradient-to-r from-[#0F1C2E] via-[#172840] to-[#0F1C2E] border-[#2563EB]/30 shadow-[0_8px_25px_rgba(37,99,235,0.12)]'
       }`}>
-        {/* Background Visual Effects */}
-        {currentUser.theme === 'tiger' ? (
-          <div className="absolute inset-0 opacity-10 bg-[repeating-linear-gradient(135deg,#FF6B00_0px,#FF6B00_15px,transparent_15px,transparent_30px)] pointer-events-none" />
-        ) : (
-          <div className="absolute -right-10 -top-10 w-64 h-64 bg-[#00B0FF]/15 rounded-full blur-3xl pointer-events-none animate-pulse" />
+        {/* Background Visual Texture */}
+        {currentUser.theme === 'tiger' && (
+          <div className="absolute right-4 top-2 opacity-15 text-[#FF5500] pointer-events-none">
+            <TigerClawMark className="w-24 h-24 transform rotate-12" />
+          </div>
         )}
 
-        <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+        <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-5">
           <div className="flex items-center gap-4">
-            <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 border shadow-lg ${
+            <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 border shadow-md ${
               currentUser.theme === 'tiger'
-                ? 'bg-[#FF6B00]/20 border-[#FF6B00]/40 text-[#FF9E00]'
-                : 'bg-[#00B0FF]/20 border-[#00B0FF]/40 text-[#00E5FF]'
+                ? 'bg-[#FF5500]/15 border-[#FF5500]/30 text-[#FF5500]'
+                : 'bg-[#2563EB]/15 border-[#2563EB]/30 text-[#3B82F6]'
             }`}>
               {currentUser.theme === 'tiger' ? (
-                <TigerIcon className="w-8 h-8 animate-bounce" />
+                <TigerClawMark className="w-7 h-7" />
               ) : (
-                <ElectricSparkIcon className="w-8 h-8 animate-pulse" />
+                <ElectricSparkIcon className="w-7 h-7" />
               )}
             </div>
             <div>
-              <div className="flex items-center gap-2">
-                <span className={`text-[11px] font-bold px-2.5 py-0.5 rounded-full border uppercase tracking-wider ${
-                  currentUser.theme === 'tiger'
-                    ? 'bg-[#FF6B00]/20 border-[#FF6B00]/30 text-[#FF9E00]'
-                    : 'bg-[#00B0FF]/20 border-[#00B0FF]/30 text-[#00E5FF]'
-                }`}>
-                  {currentUser.theme === 'tiger' ? '🐅 Yani\'s Tiger Realm' : '⚡ Mega Charizard X'}
-                </span>
-              </div>
-              <h2 className="text-xl font-bold text-[var(--text-primary)] tracking-tight mt-1 flex items-center gap-2">
+              <h2 className="text-xl font-bold text-white tracking-tight flex items-center gap-2">
                 <Calendar className="w-5 h-5 text-[var(--accent)]" />
                 Date Planner
               </h2>
               <p className="text-xs text-[var(--text-muted)] mt-0.5">
-                Plan, confirm, and cherish romantic moments together.
+                Plan and confirm what&apos;s next, together.
               </p>
             </div>
           </div>
@@ -142,7 +133,7 @@ export function DateList({ currentUser }: { currentUser: UserSession }) {
               setEditingDate(null);
               setIsModalOpen(true);
             }}
-            className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white font-semibold text-sm transition-all shadow-lg shadow-[var(--accent)]/30 hover:scale-[1.02] active:scale-[0.98] shrink-0"
+            className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white font-medium text-sm transition-all shadow-md shadow-[var(--accent)]/25 hover:scale-[1.02] active:scale-[0.98] shrink-0"
           >
             <Plus className="w-4 h-4" />
             Plan a Date

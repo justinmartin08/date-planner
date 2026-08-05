@@ -68,8 +68,6 @@ export default function DashboardPage() {
             <LetterThread currentUser={user} />
           )}
         </main>
-
-        <ThemeMascotAnimation theme={user.theme} />
       </div>
     </ThemeProvider>
   );
