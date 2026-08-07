@@ -271,7 +271,7 @@ export function LocationPicker({ value, onChange }: LocationPickerProps) {
             onClick={handleLocateMe}
             disabled={locating}
             title="Use my current location"
-            className="absolute right-14 top-1/2 -translate-y-1/2 p-1.5 rounded-lg text-[var(--text-muted)] hover:text-[var(--accent)] hover:bg-white/5 transition-colors disabled:opacity-50"
+            className="absolute right-14 top-1/2 -translate-y-1/2 p-1.5 rounded-lg text-[var(--text-muted)] hover:text-[var(--accent)] hover:bg-[var(--bg-chip-hover)] transition-colors disabled:opacity-50"
           >
             {locating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Crosshair className="w-4 h-4" />}
           </button>
@@ -287,8 +287,8 @@ export function LocationPicker({ value, onChange }: LocationPickerProps) {
 
         {/* Real-Time Google Maps Style Autocomplete Dropdown Menu */}
         {showDropdown && suggestions.length > 0 && (
-          <div className="absolute left-0 right-0 top-full mt-1.5 bg-[#0F1420] border border-white/20 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.9)] z-[9999] max-h-64 overflow-y-auto py-1 backdrop-blur-2xl animate-fadeIn">
-            <div className="px-4 py-1.5 text-[10px] font-semibold text-emerald-400 border-b border-white/10 flex items-center gap-1.5">
+          <div className="absolute left-0 right-0 top-full mt-1.5 bg-[var(--bg-elevated)] border border-[var(--border-color)] rounded-2xl shadow-[0_20px_50px_-10px_rgba(0,0,0,0.45)] z-[9999] max-h-64 overflow-y-auto py-1 backdrop-blur-2xl animate-scaleUp">
+            <div className="px-4 py-1.5 text-[10px] font-semibold text-emerald-500 border-b border-[var(--border-color)] flex items-center gap-1.5">
               <MapPin className="w-3 h-3" />
               <span>
                 {userCoords && suggestions.some((s) => s.distanceKm !== undefined)
@@ -301,18 +301,18 @@ export function LocationPicker({ value, onChange }: LocationPickerProps) {
                 key={idx}
                 type="button"
                 onClick={() => handleSelectSuggestion(item)}
-                className="w-full text-left px-4 py-3 hover:bg-white/10 text-xs text-white border-b border-white/5 last:border-0 flex items-start gap-3 transition-colors group"
+                className="w-full text-left px-4 py-3 hover:bg-[var(--bg-chip-hover)] text-xs text-[var(--text-primary)] border-b border-[var(--border-color)] last:border-0 flex items-start gap-3 transition-colors group"
               >
-                <div className="p-2 rounded-xl bg-white/5 border border-white/10 text-[var(--accent)] group-hover:bg-[var(--accent)] group-hover:text-white shrink-0 transition-colors">
+                <div className="p-2 rounded-xl bg-[var(--bg-chip)] border border-[var(--border-color)] text-[var(--accent)] group-hover:bg-[var(--accent)] group-hover:text-white shrink-0 transition-colors">
                   <MapPin className="w-4 h-4" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between gap-2">
-                    <div className="font-semibold text-white truncate text-xs group-hover:text-[var(--accent)] transition-colors">
+                    <div className="font-semibold text-[var(--text-primary)] truncate text-xs group-hover:text-[var(--accent)] transition-colors">
                       {item.title}
                     </div>
                     {item.distanceKm !== undefined && (
-                      <span className="text-[10px] text-emerald-400 font-semibold shrink-0 bg-emerald-500/10 px-1.5 py-0.5 rounded-full border border-emerald-500/20">
+                      <span className="text-[10px] text-emerald-500 font-semibold shrink-0 bg-emerald-500/10 px-1.5 py-0.5 rounded-full border border-emerald-500/20">
                         {item.distanceKm < 1
                           ? `${Math.round(item.distanceKm * 1000)} m`
                           : `${item.distanceKm.toFixed(1)} km`}
@@ -320,7 +320,7 @@ export function LocationPicker({ value, onChange }: LocationPickerProps) {
                     )}
                   </div>
                   {item.address && item.address !== item.title && (
-                    <div className="text-[11px] text-slate-400 truncate mt-0.5 leading-tight">
+                    <div className="text-[11px] text-[var(--text-muted)] truncate mt-0.5 leading-tight">
                       {item.address}
                     </div>
                   )}

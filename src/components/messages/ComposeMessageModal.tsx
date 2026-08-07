@@ -127,7 +127,7 @@ export function ComposeMessageModal({
       <div className="bg-[var(--bg-card)] border border-[var(--border-color)] w-full max-w-xl my-8 rounded-2xl p-6 sm:p-7 shadow-2xl relative">
         <button
           onClick={onClose}
-          className="absolute top-5 right-5 p-1.5 rounded-full text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-white/5 transition-colors"
+          className="absolute top-5 right-5 p-1.5 rounded-full text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-chip-hover)] transition-colors"
         >
           <X className="w-4.5 h-4.5" />
         </button>
@@ -169,7 +169,7 @@ export function ComposeMessageModal({
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            <label className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white/5 hover:bg-white/10 text-[var(--text-muted)] hover:text-[var(--text-primary)] text-xs font-medium transition-colors cursor-pointer">
+            <label className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[var(--bg-chip)] hover:bg-[var(--bg-chip-hover)] text-[var(--text-muted)] hover:text-[var(--text-primary)] text-xs font-medium transition-colors cursor-pointer">
               {uploading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Paperclip className="w-3.5 h-3.5" />}
               Attach a file
               <input type="file" onChange={handleFileSelect} className="hidden" disabled={uploading} />
@@ -213,7 +213,7 @@ export function ComposeMessageModal({
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 rounded-lg border border-[var(--border-color)] text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-white/5 text-sm font-medium transition-colors"
+              className="px-4 py-2 rounded-lg border border-[var(--border-color)] text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-chip-hover)] text-sm font-medium transition-colors"
             >
               Cancel
             </button>

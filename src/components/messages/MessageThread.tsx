@@ -6,7 +6,7 @@ import { MessageItem, UserSession, AttachmentItem } from '@/lib/types';
 import { MessageCard } from './MessageCard';
 import { ComposeMessageModal } from './ComposeMessageModal';
 import { Mail, Plus, MailOpen } from 'lucide-react';
-import { TigerIcon, ElectricSparkIcon } from '@/components/ui/Motifs';
+import { TigerIcon, StrawberryEmblem } from '@/components/ui/Motifs';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
@@ -68,17 +68,21 @@ export function LetterThread({ currentUser }: { currentUser: UserSession }) {
 
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-[var(--bg-card)] p-6 rounded-2xl border border-[var(--border-color)]">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-[var(--bg-card)] p-6 rounded-3xl border border-[var(--border-color)]"
+        style={{ boxShadow: 'var(--shadow-soft)' }}>
         <div>
           <h2 className="text-lg font-semibold text-[var(--text-primary)] tracking-tight flex items-center gap-2">
-            <Mail className="w-5 h-5 text-[var(--accent)]" />
-            Letters
+            <span className="p-1.5 rounded-lg bg-[var(--accent-soft)] text-[var(--accent)]">
+              <Mail className="w-4 h-4" />
+            </span>
+            Letters with {partnerName}
           </h2>
         </div>
 
         <button
           onClick={() => setIsComposeOpen(true)}
-          className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white font-medium text-sm transition-colors"
+          className="sheen relative overflow-hidden flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-white font-medium text-sm transition-all hover:scale-[1.02] active:scale-[0.98]"
+          style={{ background: 'linear-gradient(120deg, var(--accent), var(--accent-hover))', boxShadow: '0 10px 22px -8px var(--accent-glow)' }}
         >
           <Plus className="w-4 h-4" />
           Write a Letter
@@ -105,11 +109,11 @@ export function LetterThread({ currentUser }: { currentUser: UserSession }) {
         </div>
       ) : (
         <div className="flex flex-col items-center justify-center p-12 text-center bg-[var(--bg-card)]/50 border border-dashed border-[var(--border-color)] rounded-2xl">
-          <div className="p-3 rounded-full bg-[var(--badge-bg)] text-[var(--accent)] mb-3">
+          <div className="p-3 rounded-full bg-[var(--badge-bg)] text-[var(--accent)] mb-3 animate-breathe">
             {currentUser.theme === 'tiger' ? (
-              <TigerIcon className="w-6 h-6 text-[#E8720C]" />
+              <TigerIcon className="w-6 h-6" />
             ) : (
-              <ElectricSparkIcon className="w-6 h-6 text-[#2B7FD6]" />
+              <StrawberryEmblem className="w-6 h-6" />
             )}
           </div>
           <h3 className="text-sm font-semibold text-[var(--text-primary)] mb-1">

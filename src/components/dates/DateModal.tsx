@@ -94,7 +94,7 @@ export function DateModal({ isOpen, onClose, onSave, initialData }: DateModalPro
       <div className="bg-[var(--bg-card)] border border-[var(--border-color)] w-full max-w-lg my-auto rounded-3xl p-6 sm:p-8 shadow-[0_25px_60px_rgba(0,0,0,0.8)] relative z-10">
         <button
           onClick={onClose}
-          className="absolute top-5 right-5 p-1.5 rounded-full text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-white/5 transition-colors"
+          className="absolute top-5 right-5 p-1.5 rounded-full text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-chip-hover)] transition-colors"
         >
           <X className="w-4.5 h-4.5" />
         </button>
@@ -176,7 +176,7 @@ export function DateModal({ isOpen, onClose, onSave, initialData }: DateModalPro
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 rounded-lg border border-[var(--border-color)] text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-white/5 text-sm font-medium transition-colors"
+              className="px-4 py-2 rounded-lg border border-[var(--border-color)] text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-chip-hover)] text-sm font-medium transition-colors"
             >
               Cancel
             </button>

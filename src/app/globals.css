@@ -1,96 +1,172 @@
 @import "tailwindcss";
 @import "leaflet/dist/leaflet.css";
 
-@layer base {
-  /*
-    Neutral base: one calm charcoal-navy scale shared by both themes.
-    The accent is the only thing that shifts per logged-in user, and it's
-    used sparingly (borders, one button, small badges) rather than
-    painting whole panels in color.
-  */
-  :root {
-    --bg-main: #0B0E14;
-    --bg-card: #12161F;
-    --bg-card-hover: #171C27;
-    --border-color: #232936;
-    --border-glow: #3B82F6;
-    --text-primary: #EDEFF3;
-    --text-muted: #8A93A6;
-    --accent: #3B82F6;
-    --accent-hover: #2F6FDB;
-    --accent-soft: rgba(59, 130, 246, 0.12);
-    --accent-glow: rgba(59, 130, 246, 0.18);
-    --badge-bg: rgba(59, 130, 246, 0.10);
-    --badge-text: #7FADF5;
-    --font-heading: 'Outfit', sans-serif;
-  }
+/* ==========================================================================
+   Design System — "Cielo & Yani"
+   Cielo  → 'pokemon' : light, sky-blue, Pokémon ✧ strawberry
+   Yani   → 'tiger'   : dark, warm espresso, tiger & ember
+   Shared token scale so every component adapts by simply switching data-theme.
+   ========================================================================== */
 
-  /* Yani: Black, White & Orange Tiger Theme 🐅 */
-  [data-theme='tiger'] {
-    --bg-main: #0A0A0A;
-    --bg-card: #141210;
-    --bg-card-hover: #1E1A16;
-    --border-color: #332216;
-    --border-glow: #FF5500;
-    --accent: #FF5500;
-    --accent-hover: #E04B00;
-    --accent-soft: rgba(255, 85, 0, 0.18);
-    --accent-glow: rgba(255, 102, 0, 0.30);
-    --badge-bg: rgba(255, 85, 0, 0.14);
-    --badge-text: #FF9955;
-    --text-primary: #FFFFFF;
-    --text-muted: #A3A3A3;
-  }
+:root {
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring: cubic-bezier(0.34, 1.3, 0.64, 1);
 
-  /* Cielo: Pokémon Blue & White + Strawberry Theme ⚡🍓 */
-  [data-theme='pokemon'] {
-    --bg-main: #060E1A;
-    --bg-card: #0F1C2E;
-    --bg-card-hover: #172840;
-    --border-color: #1E3A5F;
-    --border-glow: #2563EB;
-    --accent: #2563EB;
-    --accent-hover: #1D4ED8;
-    --accent-soft: rgba(37, 99, 235, 0.18);
-    --accent-glow: rgba(59, 130, 246, 0.30);
-    --accent-strawberry: #FF2D55;
-    --badge-bg: rgba(37, 99, 235, 0.14);
-    --badge-text: #93C5FD;
-    --text-primary: #FFFFFF;
-    --text-muted: #94A3B8;
-  }
+  @apply antialiased;
+}
+
+/* ------------------------------- Cielo ─ light blue-sky + strawberry ---- */
+[data-theme='pokemon'],
+:root {
+  color-scheme: light;
+
+  /* Surfaces */
+  --bg-main: #f3f7ff;                 /* page base — soft morning sky */
+  --bg-elevated: #ffffff;
+  --bg-card: rgba(255, 255, 255, 0.82);
+  --bg-card-hover: #ffffff;
+
+  /* Interactive chip fills (replaces raw white/* utilities) */
+  --bg-chip: rgba(23, 74, 164, 0.06);
+  --bg-chip-hover: rgba(23, 74, 164, 0.12);
+
+  /* Lines */
+  --border-color: rgba(23, 74, 164, 0.14);
+  --border-glow: #3b82f6;
+
+  /* Type */
+  --text-primary: #0e2447;
+  --text-muted: #5b6c8f;
+
+  /* Accent — electric sky blue */
+  --accent: #2563eb;
+  --accent-hover: #1d4ed8;
+  --accent-soft: rgba(37, 99, 235, 0.1);
+  --accent-glow: rgba(59, 130, 246, 0.28);
+
+  /* Berry — strawberry pop */
+  --berry: #fb3d6d;
+  --berry-soft: rgba(251, 61, 109, 0.14);
+  --accent-strawberry: #fb3d6d; /* legacy alias */
+
+  /* Golden spark */
+  --sun: #ffc53d;
+  --sun-soft: rgba(255, 197, 61, 0.35);
+
+  /* Badges */
+  --badge-bg: rgba(37, 99, 235, 0.1);
+  --badge-text: #2b6ae6;
+
+  /* Depth */
+  --shadow-soft: 0 18px 48px -22px rgba(16, 66, 152, 0.4);
+
+  --font-heading: 'Outfit', sans-serif;
+}
+
+/* ------------------------------- Yani ── warm espresso & tiger ember ----- */
+[data-theme='tiger'] {
+  color-scheme: dark;
+
+  --bg-main: #14110d;
+  --bg-elevated: #1d1914;
+  --bg-card: rgba(29, 25, 20, 0.86);
+  --bg-card-hover: #241f18;
+
+  --bg-chip: rgba(255, 255, 255, 0.06);
+  --bg-chip-hover: rgba(255, 255, 255, 0.11);
+
+  --border-color: rgba(255, 166, 88, 0.16);
+  --border-glow: #ff7a00;
+
+  --text-primary: #f8f2e6;
+  --text-muted: #b9a88f;
+
+  --accent: #ff7a00;
+  --accent-hover: #e76a00;
+  --accent-soft: rgba(255, 122, 0, 0.16);
+  --accent-glow: rgba(255, 122, 0, 0.32);
+
+  --berry: #ffa54d;
+  --berry-soft: rgba(255, 165, 77, 0.16);
+  --accent-strawberry: #ffa54d;
+
+  --sun: #ffb347;
+  --sun-soft: rgba(255, 179, 71, 0.22);
+
+  --badge-bg: rgba(255, 122, 0, 0.18);
+  --badge-text: #ffbc8a;
+
+  --shadow-soft: 0 20px 44px -20px rgba(255, 122, 0, 0.28), 0 8px 22px -14px rgba(0, 0, 0, 0.6);
+
+  --font-heading: 'Outfit', sans-serif;
 }
 
 body {
   background-color: var(--bg-main);
   color: var(--text-primary);
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  font-family: var(--font-heading);
   min-height: 100vh;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition: background-color 0.4s ease, color 0.4s ease;
+  scroll-behavior: smooth;
+}
+
+/* Themed pages sometimes paint their own gradient; keep the baseline calm. */
+::selection {
+  background: var(--accent);
+  color: #fff;
 }
 
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 9px;
 }
 ::-webkit-scrollbar-track {
-  background: var(--bg-main);
+  background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--border-color);
-  border-radius: 4px;
+  background: color-mix(in srgb, var(--text-muted) 45%, transparent);
+  border-radius: 999px;
+  border: 2px solid var(--bg-main);
 }
 ::-webkit-scrollbar-thumb:hover {
   background: var(--accent);
 }
 
-/* Leaflet map dark-mode tuning */
-.map-picker .leaflet-container {
+/* -------------------------------------------------------------------------
+   Reusable tokens-as-classes
+   ------------------------------------------------------------------------- */
+.text-gradient {
+  background: linear-gradient(100deg, var(--text-primary) 0%, var(--accent) 55%, var(--berry) 120%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+.text-gradient-accent {
+  background: linear-gradient(100deg, var(--accent), var(--berry));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+.glass {
   background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-soft);
+  backdrop-filter: blur(14px) saturate(1.4);
+  -webkit-backdrop-filter: blur(14px) saturate(1.4);
+}
+
+/* ---------------------------------- Leaflet ----------------------------- */
+.map-picker .leaflet-container {
+  background: var(--bg-elevated);
+  color: var(--text-primary);
   font-family: inherit;
   border-radius: 1rem;
 }
 .map-picker .leaflet-control-attribution {
-  background: rgba(11, 14, 20, 0.75) !important;
+  background: color-mix(in srgb, var(--bg-main) 80%, transparent) !important;
   color: var(--text-muted) !important;
   font-size: 10px !important;
 }
@@ -98,15 +174,18 @@ body {
   color: var(--text-muted) !important;
 }
 .map-picker .leaflet-control-zoom a {
-  background: var(--bg-card) !important;
+  background: var(--bg-elevated) !important;
   color: var(--text-primary) !important;
-  border-color: var(--border-color) !important;
+  border: 1px solid var(--border-color) !important;
 }
 .map-picker .leaflet-control-zoom a:hover {
-  background: var(--bg-card-hover) !important;
+  background: var(--bg-chip-hover) !important;
+}
+.map-picker .leaflet-control-zoom a {
+  box-shadow: none !important;
 }
 
-/* Custom Bespoke Spring & Fluid Physics Animations */
+/* ---------------------------- Modal / card entrances --------------------- */
 @keyframes modalEnter {
   0% {
     opacity: 0;
@@ -118,16 +197,13 @@ body {
   }
 }
 .animate-modalEnter {
-  animation: modalEnter 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: modalEnter 0.32s var(--ease-out) forwards;
 }
 
 @keyframes scaleUp {
   0% {
     opacity: 0;
-    transform: scale(0.93) translateY(8px);
-  }
-  60% {
-    transform: scale(1.01) translateY(-1px);
+    transform: scale(0.94) translateY(10px);
   }
   100% {
     opacity: 1;
@@ -135,15 +211,21 @@ body {
   }
 }
 .animate-scaleUp {
-  animation: scaleUp 0.38s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: scaleUp 0.42s var(--ease-spring) forwards;
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(4px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 .animate-fadeIn {
-  animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: fadeIn 0.28s var(--ease-out);
 }
 
 @keyframes shake {
@@ -154,25 +236,39 @@ body {
   80% { transform: translateX(3px); }
 }
 .animate-shake {
-  animation: shake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+  animation: shake 0.4s var(--ease-out);
 }
 
-/* Fluid interactive card & button transitions */
+/* Staggered "rise in" for lists — pair position via `--d` inline delay */
+@keyframes riseIn {
+  0% {
+    opacity: 0;
+    transform: translateY(18px) scale(0.99);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+.rise-in {
+  opacity: 0;
+  animation: riseIn 0.5s var(--ease-out) forwards;
+  animation-delay: var(--d, 0ms);
+}
+
+/* ---------------------------------- Fluid interactions ------------------- */
 .interactive-card {
-  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), 
-              box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1), 
-              border-color 0.3s ease;
+  transition: transform 0.4s var(--ease-spring), box-shadow 0.4s var(--ease-out),
+    border-color 0.35s ease, background-color 0.35s ease;
 }
 .interactive-card:hover {
-  transform: translateY(-3px) scale(1.005);
-  box-shadow: 0 12px 30px -10px var(--accent-glow);
-  border-color: var(--accent-soft);
+  transform: translateY(-4px) scale(1.005);
+  box-shadow: var(--shadow-soft), 0 0 0 1px color-mix(in srgb, var(--accent) 25%, transparent);
 }
 
 .interactive-btn {
-  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), 
-              background-color 0.2s ease, 
-              box-shadow 0.2s ease;
+  transition: transform 0.25s var(--ease-spring), background-color 0.25s ease,
+    box-shadow 0.25s ease, color 0.25s ease, border-color 0.25s ease;
 }
 .interactive-btn:hover {
   transform: translateY(-1px) scale(1.02);
@@ -181,21 +277,85 @@ body {
   transform: translateY(0) scale(0.98);
 }
 
-/* Theme Micro-Animations */
-@keyframes electricPulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(43, 127, 214, 0); }
-  50% { box-shadow: 0 0 16px 3px rgba(43, 127, 214, 0.28); }
+/* ---------------------------------- Ember & spark pulse ------------------- */
+@keyframes emberPulse {
+  0%, 100% { box-shadow: var(--shadow-soft), 0 0 0 0 var(--accent-glow); }
+  50% { box-shadow: var(--shadow-soft), 0 0 24px 4px var(--accent-glow); }
+}
+[data-theme='tiger'] .theme-card-glow {
+  animation: emberPulse 4.5s infinite ease-in-out;
 }
 
-@keyframes emberShimmer {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(232, 114, 12, 0); }
-  50% { box-shadow: 0 0 18px 3px rgba(232, 114, 12, 0.30); }
+@keyframes berryPulse {
+  0%, 100% { box-shadow: var(--shadow-soft), 0 0 0 0 var(--berry-soft); }
+  50% { box-shadow: var(--shadow-soft), 0 0 22px 3px var(--berry-soft); }
 }
-
 [data-theme='pokemon'] .theme-card-glow {
-  animation: electricPulse 4s infinite ease-in-out;
+  animation: berryPulse 5s infinite ease-in-out;
 }
 
-[data-theme='tiger'] .theme-card-glow:hover {
-  animation: emberShimmer 2.5s infinite ease-in-out;
+/* Soft breathing for loop-emblems / mascots */
+@keyframes breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.045); }
+}
+.animate-breathe {
+  animation: breathe 3.4s var(--ease-out) infinite;
+}
+
+/* ---------------------------------- Ambient art --------------------------- */
+@keyframes floatY {
+  0%, 100% { transform: translate3d(0, 0, 0) rotate(var(--tilt, 0deg)); }
+  50% { transform: translate3d(0, -14px, 0) rotate(var(--tiltB, var(--tilt, 0deg))); }
+}
+@keyframes driftX {
+  0%, 100% { transform: translate3d(0, 0, 0) rotate(var(--tilt, 0deg)); }
+  50% { transform: translate3d(18px, -10px, 0) rotate(var(--tiltB, var(--tilt, 0deg))); }
+}
+.ambient-float {
+  animation: floatY 9s var(--ease-out) infinite;
+}
+.ambient-drift {
+  animation: driftX 13s var(--ease-out) infinite;
+}
+
+/* Pokéball slow roll */
+@keyframes spinSlow {
+  to { transform: rotate(360deg); }
+}
+.animate-spin-slow {
+  animation: spinSlow 22s linear infinite;
+}
+
+/* Gradient sheen sweep over buttons / highlights */
+@keyframes sheen {
+  0% { transform: translateX(-120%) skewX(-18deg); }
+  100% { transform: translateX(220%) skewX(-18deg); }
+}
+.sheen::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  width: 40%;
+  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+  transform: translateX(-120%) skewX(-18deg);
+  pointer-events: none;
+}
+.sheen:hover::after {
+  animation: sheen 0.9s var(--ease-out);
+}
+
+/* Theme switch fade */
+@keyframes themeWash {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+.theme-swap {
+  animation: themeWash 0.55s var(--ease-out);
+}
+
+/* Fine dot grid that reads on both light & dark */
+.bg-dotgrid {
+  background-image: radial-gradient(color-mix(in srgb, var(--text-muted) 22%, transparent) 1px, transparent 1px);
+  background-size: 22px 22px;
 }

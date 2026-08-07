@@ -10,7 +10,6 @@ import { DateList } from '@/components/dates/DateList';
 import { DateCalendar } from '@/components/dates/DateCalendar';
 import { LetterThread } from '@/components/messages/MessageThread';
 import { ThemePatternBg } from '@/components/ui/Motifs';
-import { Loader2 } from 'lucide-react';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
@@ -40,10 +39,12 @@ export default function DashboardPage() {
 
   if (isLoading || !user) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#0B0E14] text-white">
+      <div className="min-h-screen flex items-center justify-center bg-[var(--bg-main)] text-[var(--text-primary)] theme-swap">
         <div className="flex flex-col items-center gap-3">
-          <Loader2 className="w-6 h-6 text-[#8A93A6] animate-spin" />
-          <p className="text-sm font-medium text-[#8A93A6]">Loading…</p>
+          <span className="w-10 h-10 rounded-2xl border border-[var(--border-color)] bg-[var(--bg-card)] flex items-center justify-center">
+            <span className="w-5 h-5 rounded-full border-2 border-[var(--accent)] border-t-transparent animate-spin" />
+          </span>
+          <p className="text-sm font-medium text-[var(--text-muted)]">Cielo &amp; Yani…</p>
         </div>
       </div>
     );

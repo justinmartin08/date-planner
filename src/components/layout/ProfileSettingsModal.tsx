@@ -2,7 +2,7 @@
 
 import React, { useState, useRef } from 'react';
 import { UserSession } from '@/lib/types';
-import { TigerIcon, ElectricSparkIcon } from '../ui/Motifs';
+import { TigerIcon, StrawberryEmblem } from '../ui/Motifs';
 import { ImageCropperModal } from '../ui/ImageCropperModal';
 import { X, User, Lock, Check, Loader2, Camera } from 'lucide-react';
 
@@ -197,7 +197,7 @@ export function ProfileSettingsModal({
       <div className="bg-[var(--bg-card)] border border-[var(--border-color)] w-full max-w-md rounded-2xl p-6 sm:p-7 shadow-2xl relative">
         <button
           onClick={onClose}
-          className="absolute top-5 right-5 p-1.5 rounded-full text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-white/5 transition-colors"
+          className="absolute top-5 right-5 p-1.5 rounded-full text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-chip-hover)] transition-colors"
         >
           <X className="w-4.5 h-4.5" />
         </button>
@@ -208,9 +208,9 @@ export function ProfileSettingsModal({
               // eslint-disable-next-line @next/next/no-img-element
               <img src={avatarUrl} alt={user.displayName} className="w-full h-full object-cover" />
             ) : isTiger ? (
-              <TigerIcon className="w-6 h-6 text-[#E8720C]" />
+              <TigerIcon className="w-6 h-6 text-[var(--accent)]" />
             ) : (
-              <ElectricSparkIcon className="w-6 h-6 text-[#2B7FD6]" />
+              <StrawberryEmblem className="w-6 h-6" />
             )}
           </div>
           <div>
@@ -255,14 +255,14 @@ export function ProfileSettingsModal({
                 Custom Avatar
               </label>
               <div className="flex items-center gap-4 p-3 rounded-xl bg-[var(--bg-main)] border border-[var(--border-color)]">
-                <div className="w-14 h-14 rounded-full overflow-hidden bg-white/5 border border-[var(--border-color)] flex items-center justify-center shrink-0 relative group">
+                <div className="w-14 h-14 rounded-full overflow-hidden bg-[var(--bg-chip)] border border-[var(--border-color)] flex items-center justify-center shrink-0 relative group">
                   {avatarUrl ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
                   ) : isTiger ? (
-                    <TigerIcon className="w-7 h-7 text-[#E8720C]" />
+                    <TigerIcon className="w-7 h-7 text-[var(--accent)]" />
                   ) : (
-                    <ElectricSparkIcon className="w-7 h-7 text-[#2B7FD6]" />
+                    <StrawberryEmblem className="w-7 h-7" />
                   )}
                 </div>
 
@@ -340,17 +340,17 @@ export function ProfileSettingsModal({
                 <button
                   type="button"
                   onClick={onClose}
-                  className="px-4 py-2 rounded-lg border border-[var(--border-color)] text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-white/5 text-xs font-medium transition-colors"
-                >
-                  Close
-                </button>
-                <button
-                  type="submit"
-                  disabled={profileSaving}
-                  className="px-4 py-2 rounded-lg bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white text-xs font-medium transition-colors disabled:opacity-50"
-                >
-                  {profileSaving ? 'Saving…' : 'Save Changes'}
-                </button>
+className="px-4 py-2 rounded-lg border border-[var(--border-color)] text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-chip-hover)] text-xs font-medium transition-colors"
+                  >
+                    Close
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={profileSaving}
+                    className="px-4 py-2 rounded-lg bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white text-xs font-medium transition-colors disabled:opacity-50"
+                  >
+                    {profileSaving ? 'Saving…' : 'Save Changes'}
+                  </button>
               </div>
             </form>
           </div>
@@ -411,17 +411,17 @@ export function ProfileSettingsModal({
               <button
                 type="button"
                 onClick={onClose}
-                className="px-4 py-2 rounded-lg border border-[var(--border-color)] text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-white/5 text-xs font-medium transition-colors"
-              >
-                Close
-              </button>
-              <button
-                type="submit"
-                disabled={passwordSaving}
-                className="px-4 py-2 rounded-lg bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white text-xs font-medium transition-colors disabled:opacity-50"
-              >
-                {passwordSaving ? 'Updating…' : 'Update Password'}
-              </button>
+className="px-4 py-2 rounded-lg border border-[var(--border-color)] text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-chip-hover)] text-xs font-medium transition-colors"
+                  >
+                    Close
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={passwordSaving}
+                    className="px-4 py-2 rounded-lg bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white text-xs font-medium transition-colors disabled:opacity-50"
+                  >
+                    {passwordSaving ? 'Updating…' : 'Update Password'}
+                  </button>
             </div>
           </form>
         )}

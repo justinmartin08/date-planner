@@ -185,7 +185,7 @@ export function ImageCropperModal({
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-full text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-white/5 transition-colors"
+            className="p-1.5 rounded-full text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-chip-hover)] transition-colors"
           >
             <X className="w-4 h-4" />
           </button>
@@ -233,7 +233,7 @@ export function ImageCropperModal({
             <button
               type="button"
               onClick={() => setRotation((r) => (r + 90) % 360)}
-              className="px-3 py-1.5 rounded-lg border border-[var(--border-color)] text-xs text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-white/5 transition-colors flex items-center gap-1.5"
+              className="px-3 py-1.5 rounded-lg border border-[var(--border-color)] text-xs text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-chip-hover)] transition-colors flex items-center gap-1.5"
             >
               <RotateCw className="w-3.5 h-3.5" /> Rotate 90°
             </button>
@@ -242,7 +242,7 @@ export function ImageCropperModal({
               <button
                 type="button"
                 onClick={onClose}
-                className="px-4 py-1.5 rounded-lg border border-[var(--border-color)] text-xs font-medium text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-white/5 transition-colors"
+                className="px-4 py-1.5 rounded-lg border border-[var(--border-color)] text-xs font-medium text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-chip-hover)] transition-colors"
               >
                 Cancel
               </button>

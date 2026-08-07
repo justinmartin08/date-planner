@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { DateProposalItem, UserSession } from '@/lib/types';
-import { TigerIcon, ElectricSparkIcon } from '../ui/Motifs';
+import { TigerIcon, StrawberryEmblem } from '../ui/Motifs';
 import { MapPin, Calendar as CalendarIcon, Clock, CheckCircle2, XCircle, Sparkles, Trash2, Edit3, ExternalLink, ChevronDown, Download } from 'lucide-react';
 
 function CalendarExportButton({ dateItem }: { dateItem: DateProposalItem }) {
@@ -54,7 +54,7 @@ function CalendarExportButton({ dateItem }: { dateItem: DateProposalItem }) {
       <button
         type="button"
         onClick={() => setOpen(!open)}
-        className="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-[var(--accent)] text-xs font-medium transition-colors flex items-center gap-1.5"
+        className="px-2.5 py-1 rounded-lg bg-[var(--bg-chip)] hover:bg-[var(--bg-chip-hover)] border border-[var(--border-color)] text-[var(--accent)] text-xs font-medium transition-colors flex items-center gap-1.5"
       >
         <CalendarIcon className="w-3.5 h-3.5" />
         Add to Calendar
@@ -148,12 +148,15 @@ export function DateCard({
   };
 
   return (
-    <div className="theme-card-glow group relative bg-[var(--bg-card)] hover:bg-[var(--bg-card-hover)] border border-[var(--border-color)] hover:border-[var(--accent)]/50 rounded-2xl p-5 transition-all duration-300 flex flex-col justify-between">
+    <div
+      className="group relative bg-[var(--bg-card)] hover:bg-[var(--bg-card-hover)] border border-[var(--border-color)] hover:border-[var(--accent)]/50 rounded-3xl p-5 transition-all duration-300 flex flex-col justify-between interactive-card"
+      style={{ boxShadow: 'var(--shadow-soft)' }}
+    >
       <div>
         <div className="flex items-center justify-between gap-2 mb-4">
           {getStatusBadge()}
-          <div className="flex items-center gap-1.5 text-xs text-[var(--text-muted)] bg-white/5 px-2 py-1 rounded-md">
-            {isCreatorTiger ? <TigerIcon className="w-3.5 h-3.5 text-[#E8720C]" /> : <ElectricSparkIcon className="w-3.5 h-3.5 text-[#2B7FD6]" />}
+          <div className="flex items-center gap-1.5 text-xs text-[var(--text-muted)] bg-[var(--bg-chip)] px-2 py-1 rounded-md">
+            {isCreatorTiger ? <TigerIcon className="w-3.5 h-3.5 text-[var(--accent)]" /> : <StrawberryEmblem className="w-3.5 h-3.5" />}
             <span>{dateItem.creator.displayName}</span>
           </div>
         </div>
@@ -239,7 +242,7 @@ export function DateCard({
           <div className="flex items-center gap-2 ml-auto">
             <button
               onClick={() => onEdit(dateItem)}
-              className="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors"
+              className="p-2 rounded-lg bg-[var(--bg-chip)] hover:bg-[var(--bg-chip-hover)] text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors"
               title="Edit"
             >
               <Edit3 className="w-3.5 h-3.5" />

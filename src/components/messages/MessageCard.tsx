@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { MessageItem, UserSession } from '@/lib/types';
-import { TigerIcon, ElectricSparkIcon } from '../ui/Motifs';
+import { TigerIcon, StrawberryEmblem } from '../ui/Motifs';
 import { CheckCheck, Check, Clock, Paperclip, Mic, Download } from 'lucide-react';
 
 interface MessageCardProps {
@@ -82,12 +82,10 @@ export function MessageCard({ message, currentUser, onMarkRead }: MessageCardPro
           : 'mr-auto bg-[var(--bg-card-hover)] border-[var(--border-glow)]/40'
       }`}
     >
-      <div className="flex items-center justify-between gap-3 mb-4 pb-3 border-b border-white/10">
+      <div className="flex items-center justify-between gap-3 mb-4 pb-3 border-b border-[var(--border-color)]">
         <div className="flex items-center gap-2.5">
           <div
-            className={`w-8 h-8 rounded-full overflow-hidden flex items-center justify-center border shrink-0 ${
-              senderIsTiger ? 'bg-[#FF5500]/15 border-[#FF5500]/30 text-[#FF5500]' : 'bg-[#2563EB]/15 border-[#2563EB]/30 text-[#3B82F6]'
-            }`}
+            className={`w-8 h-8 rounded-full overflow-hidden flex items-center justify-center border shrink-0 bg-[var(--accent-soft)] border-[var(--accent)] text-[var(--accent)]`}
           >
             {message.sender.avatarUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
@@ -95,7 +93,7 @@ export function MessageCard({ message, currentUser, onMarkRead }: MessageCardPro
             ) : senderIsTiger ? (
               <TigerIcon className="w-4 h-4" />
             ) : (
-              <ElectricSparkIcon className="w-4 h-4" />
+              <StrawberryEmblem className="w-4 h-4" />
             )}
           </div>
           <div>
@@ -131,7 +129,7 @@ export function MessageCard({ message, currentUser, onMarkRead }: MessageCardPro
         <div className="mt-4 space-y-2">
           {message.attachments.map((a) =>
             a.kind === 'voice' ? (
-              <div key={a.id} className="flex items-center gap-3 p-2.5 rounded-lg bg-white/5 border border-white/10">
+              <div key={a.id} className="flex items-center gap-3 p-2.5 rounded-lg bg-[var(--bg-chip)] border border-[var(--border-color)]">
                 <div className="p-1.5 rounded-full bg-[var(--accent)] text-white shrink-0">
                   <Mic className="w-3 h-3" />
                 </div>
@@ -149,7 +147,7 @@ export function MessageCard({ message, currentUser, onMarkRead }: MessageCardPro
                 download={a.fileName}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-2.5 p-2.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 transition-colors"
+                className="flex items-center gap-2.5 p-2.5 rounded-lg bg-[var(--bg-chip)] hover:bg-[var(--bg-chip-hover)] border border-[var(--border-color)] transition-colors"
               >
                 <Paperclip className="w-3.5 h-3.5 text-[var(--accent)] shrink-0" />
                 <span className="text-xs text-[var(--text-primary)] flex-1 truncate">{a.fileName}</span>
@@ -161,7 +159,7 @@ export function MessageCard({ message, currentUser, onMarkRead }: MessageCardPro
         </div>
       )}
 
-      <div className="mt-4 pt-3 border-t border-white/5 flex items-center justify-end text-xs text-[var(--text-muted)] gap-1.5">
+      <div className="mt-4 pt-3 border-t border-[var(--border-color)] flex items-center justify-end text-xs text-[var(--text-muted)] gap-1.5">
         {isSender ? (
           message.isRead ? (
             <span className="flex items-center gap-1 text-emerald-400 font-medium">

@@ -111,13 +111,13 @@ export function DateCalendar() {
         <div className="flex items-center gap-2">
           <button
             onClick={jumpToday}
-            className="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-[var(--border-color)] text-xs font-medium text-[var(--text-primary)] transition-colors"
+            className="px-3 py-1.5 rounded-lg bg-[var(--bg-chip)] hover:bg-[var(--bg-chip-hover)] border border-[var(--border-color)] text-xs font-medium text-[var(--text-primary)] transition-colors"
           >
             Today
           </button>
           <button
             onClick={() => goMonth(-1)}
-            className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-[var(--border-color)] text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors"
+            className="p-1.5 rounded-lg bg-[var(--bg-chip)] hover:bg-[var(--bg-chip-hover)] border border-[var(--border-color)] text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors"
             title="Previous month"
           >
             <ChevronLeft className="w-4 h-4" />
@@ -127,7 +127,7 @@ export function DateCalendar() {
           </span>
           <button
             onClick={() => goMonth(1)}
-            className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-[var(--border-color)] text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors"
+            className="p-1.5 rounded-lg bg-[var(--bg-chip)] hover:bg-[var(--bg-chip-hover)] border border-[var(--border-color)] text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors"
             title="Next month"
           >
             <ChevronRight className="w-4 h-4" />
