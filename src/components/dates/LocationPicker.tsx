@@ -1,7 +1,20 @@
 'use client';
 
 import React, { useEffect, useRef, useState, useCallback } from 'react';
-import { MapPin, Search, Loader2, X } from 'lucide-react';
+import {
+  MapPin,
+  Search,
+  Loader2,
+  X,
+  Crosshair,
+  Coffee,
+  UtensilsCrossed,
+  Trees,
+  ShoppingBag,
+  Clapperboard,
+  Waves,
+  Landmark,
+} from 'lucide-react';
 import type { Map as LeafletMap, Marker as LeafletMarker } from 'leaflet';
 
 export interface PickedLocation {
@@ -20,6 +33,16 @@ interface LocationPickerProps {
 const DEFAULT_CENTER: [number, number] = [14.5, 121.0];
 const DEFAULT_ZOOM = 12;
 
+const POPULAR_CATEGORIES = [
+  { cat: 'cafe', label: 'Cafés', icon: Coffee },
+  { cat: 'restaurant', label: 'Restaurants', icon: UtensilsCrossed },
+  { cat: 'park', label: 'Parks', icon: Trees },
+  { cat: 'mall', label: 'Malls', icon: ShoppingBag },
+  { cat: 'cinema', label: 'Cinema', icon: Clapperboard },
+  { cat: 'beach', label: 'Beaches', icon: Waves },
+  { cat: 'attraction', label: 'Attractions', icon: Landmark },
+] as const;
+
 export function LocationPicker({ value, onChange }: LocationPickerProps) {
   const mapRef = useRef<HTMLDivElement | null>(null);
   const leafletMapRef = useRef<LeafletMap | null>(null);
@@ -28,6 +51,14 @@ export function LocationPicker({ value, onChange }: LocationPickerProps) {
   const [query, setQuery] = useState('');
   const [searching, setSearching] = useState(false);
   const [searchError, setSearchError] = useState('');
+  const [suggestions, setSuggestions] = useState<
+    Array<{ title: string; address: string; lat: number; lng: number; distanceKm?: number }>
+  >([]);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [showPopular, setShowPopular] = useState(false);
+  const [userCoords, setUserCoords] = useState<{ lat: number; lng: number } | null>(null);
+  const [locating, setLocating] = useState(false);
+  const [locateError, setLocateError] = useState('');
 
   const reverseGeocode = useCallback(async (lat: number, lng: number) => {
     try {
@@ -43,20 +74,23 @@ export function LocationPicker({ value, onChange }: LocationPickerProps) {
     }
   }, [onChange]);
 
-  const placeMarker = useCallback((L: typeof import('leaflet'), lat: number, lng: number) => {
-    const map = leafletMapRef.current;
-    if (!map) return;
-    if (markerRef.current) {
-      markerRef.current.setLatLng([lat, lng]);
-    } else {
-      markerRef.current = L.marker([lat, lng], { draggable: true }).addTo(map);
-      markerRef.current.on('dragend', () => {
-        const pos = markerRef.current!.getLatLng();
-        reverseGeocode(pos.lat, pos.lng);
-      });
-    }
-    map.panTo([lat, lng]);
-  }, [reverseGeocode]);
+  const placeMarker = useCallback(
+    (L: typeof import('leaflet'), lat: number, lng: number) => {
+      const map = leafletMapRef.current;
+      if (!map) return;
+      if (markerRef.current) {
+        markerRef.current.setLatLng([lat, lng]);
+      } else {
+        markerRef.current = L.marker([lat, lng], { draggable: true }).addTo(map);
+        markerRef.current.on('dragend', () => {
+          const pos = markerRef.current!.getLatLng();
+          reverseGeocode(pos.lat, pos.lng);
+        });
+      }
+      map.panTo([lat, lng]);
+    },
+    [reverseGeocode]
+  );
 
   useEffect(() => {
     let cancelled = false;
@@ -110,64 +144,89 @@ export function LocationPicker({ value, onChange }: LocationPickerProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const [suggestions, setSuggestions] = useState<Array<{ title: string; address: string; lat: number; lng: number; distanceKm?: number }>>([]);
-  const [showDropdown, setShowDropdown] = useState(false);
-  const [userCoords, setUserCoords] = useState<{ lat: number; lng: number } | null>(null);
-
-  // Auto-detect user current location on mount
-  useEffect(() => {
-    if (typeof window !== 'undefined' && 'geolocation' in navigator) {
+  // Promise-based geolocation so "Use my location" can be triggered on demand
+  // (a user gesture) and also awaited before a category search.
+  const getPosition = useCallback((): Promise<{ lat: number; lng: number } | null> => {
+    return new Promise<{ lat: number; lng: number } | null>((resolve) => {
+      if (typeof navigator === 'undefined' || !('geolocation' in navigator)) {
+        resolve(null);
+        return;
+      }
+      setLocating(true);
       navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          const coords = { lat: pos.coords.latitude, lng: pos.coords.longitude };
-          setUserCoords(coords);
-          if (!value && leafletMapRef.current) {
-            leafletMapRef.current.setView([coords.lat, coords.lng], 13);
-          }
-        },
-        (err) => console.log('Geolocation prompt dismissed or unavailable:', err),
+        (pos) => resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+        () => resolve(null),
         { timeout: 8000, maximumAge: 60000 }
       );
+    }).finally(() => setLocating(false));
+  }, []);
+
+  const handleLocateMe = useCallback(async () => {
+    setLocateError('');
+    const coords = await getPosition();
+    if (!coords) {
+      setLocateError('Location access was denied. Results will still show, but without distance ordering.');
+      return;
     }
-  }, [value]);
+    setUserCoords(coords);
+    if (leafletMapRef.current) {
+      leafletMapRef.current.setView([coords.lat, coords.lng], 13);
+    }
+  }, [getPosition]);
+
+  // Auto-detect user location on first mount so searches are nearest-first
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      handleLocateMe();
+    }, 0);
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Debounced proximity-biased search querying server-side API endpoint (/api/location/search)
   useEffect(() => {
-    if (!query.trim() || query.trim().length < 2) {
-      setSuggestions([]);
-      setShowDropdown(false);
-      return;
-    }
-
-    const timer = setTimeout(async () => {
-      setSearching(true);
-      try {
-        const searchUrl = userCoords
-          ? `/api/location/search?q=${encodeURIComponent(query.trim())}&lat=${userCoords.lat}&lng=${userCoords.lng}`
-          : `/api/location/search?q=${encodeURIComponent(query.trim())}`;
-
-        const res = await fetch(searchUrl);
-        const data = await res.json();
-        if (data?.results?.length > 0) {
-          setSuggestions(data.results);
-          setShowDropdown(true);
-          setSearchError('');
-        } else {
+    const trimmed = query.trim();
+    const timer = setTimeout(
+      async () => {
+        if (!trimmed || trimmed.length < 2) {
           setSuggestions([]);
           setShowDropdown(false);
+          setShowPopular(true);
+          return;
         }
-      } catch {
-        setSuggestions([]);
-      } finally {
-        setSearching(false);
-      }
-    }, 300);
+
+        setShowPopular(false);
+        setSearching(true);
+        try {
+          const searchUrl = userCoords
+            ? `/api/location/search?q=${encodeURIComponent(trimmed)}&lat=${userCoords.lat}&lng=${userCoords.lng}`
+            : `/api/location/search?q=${encodeURIComponent(trimmed)}`;
+
+          const res = await fetch(searchUrl);
+          const data = await res.json();
+          if (data?.results?.length > 0) {
+            setSuggestions(data.results);
+            setShowDropdown(true);
+            setSearchError('');
+          } else {
+            setSuggestions([]);
+            setShowDropdown(false);
+          }
+        } catch {
+          setSuggestions([]);
+        } finally {
+          setSearching(false);
+        }
+      },
+      trimmed && trimmed.length >= 2 ? 300 : 0
+    );
 
     return () => clearTimeout(timer);
   }, [query, userCoords]);
 
   const handleSelectSuggestion = async (item: { title: string; address: string; lat: number; lng: number }) => {
     setShowDropdown(false);
+    setShowPopular(false);
     setSuggestions([]);
     const L = await import('leaflet');
     placeMarker(L, item.lat, item.lng);
@@ -201,6 +260,43 @@ export function LocationPicker({ value, onChange }: LocationPickerProps) {
     }
   };
 
+  const handleCategorySearch = async (cat: string) => {
+    setShowPopular(false);
+    setShowDropdown(false);
+    setSearchError('');
+
+    let coords = userCoords;
+    if (!coords) {
+      coords = await getPosition();
+      if (coords) {
+        setUserCoords(coords);
+        if (leafletMapRef.current) {
+          leafletMapRef.current.setView([coords.lat, coords.lng], 13);
+        }
+      }
+    }
+    if (!coords) {
+      setLocateError('Share your location to see popular places near you.');
+      return;
+    }
+
+    setSearching(true);
+    try {
+      const res = await fetch(`/api/location/search?cat=${cat}&lat=${coords.lat}&lng=${coords.lng}`);
+      const data = await res.json();
+      if (data?.results?.length > 0) {
+        setSuggestions(data.results);
+        setShowDropdown(true);
+      } else {
+        setSearchError('No places found nearby. Try another category.');
+      }
+    } catch {
+      setSearchError('Could not load nearby places. Try again.');
+    } finally {
+      setSearching(false);
+    }
+  };
+
   const handleClear = () => {
     if (markerRef.current && leafletMapRef.current) {
       leafletMapRef.current.removeLayer(markerRef.current);
@@ -218,7 +314,8 @@ export function LocationPicker({ value, onChange }: LocationPickerProps) {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onFocus={() => {
-            if (suggestions.length > 0) setShowDropdown(true);
+            if (showDropdown && suggestions.length > 0) setShowDropdown(true);
+            if (!query.trim() && !showDropdown && !showPopular) setShowPopular(true);
           }}
           onKeyDown={(e) => {
             if (e.key === 'Enter') {
@@ -229,10 +326,21 @@ export function LocationPicker({ value, onChange }: LocationPickerProps) {
           placeholder={
             userCoords
               ? 'Search nearby places, malls, or landmarks...'
-              : 'Search any place, mall, city, or landmark worldwide...'
+              : 'Search places, malls, cities, or landmarks...'
           }
           className="w-full pl-9 pr-20 py-2.5 rounded-xl bg-[var(--bg-main)] border border-[var(--border-color)] text-[var(--text-primary)] focus:outline-none focus:border-[var(--accent)] text-sm transition-colors"
         />
+        {!userCoords && (
+          <button
+            type="button"
+            onClick={handleLocateMe}
+            disabled={locating}
+            title="Use my current location"
+            className="absolute right-14 top-1/2 -translate-y-1/2 p-1.5 rounded-lg text-[var(--text-muted)] hover:text-[var(--accent)] hover:bg-white/5 transition-colors disabled:opacity-50"
+          >
+            {locating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Crosshair className="w-4 h-4" />}
+          </button>
+        )}
         <button
           type="button"
           onClick={handleSearch}
@@ -242,15 +350,45 @@ export function LocationPicker({ value, onChange }: LocationPickerProps) {
           {searching ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : 'Find'}
         </button>
 
+        {/* Popular places panel (Google Maps style suggestions) */}
+        {showPopular && !showDropdown && (
+          <div className="absolute left-0 right-0 top-full mt-1.5 bg-[#0F1420] border border-white/20 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.9)] z-[9999] py-2 backdrop-blur-2xl animate-fadeIn">
+            <div className="px-4 pb-1.5 text-[10px] font-semibold text-emerald-400 border-b border-white/10 pb-2 flex items-center gap-1.5">
+              <MapPin className="w-3 h-3" />
+              <span>
+                {userCoords ? 'Popular places near you' : 'Popular places near me — share location for the closest picks'}
+              </span>
+            </div>
+            <div className="grid grid-cols-2 gap-1.5 p-2">
+              {POPULAR_CATEGORIES.map((c) => {
+                const Icon = c.icon;
+                return (
+                  <button
+                    key={c.cat}
+                    type="button"
+                    onClick={() => handleCategorySearch(c.cat)}
+                    className="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-white/5 border border-white/10 text-left text-xs text-white hover:bg-white/10 hover:border-[var(--accent)] transition-colors"
+                  >
+                    <Icon className="w-4 h-4 text-[var(--accent)] shrink-0" />
+                    <span className="truncate">{c.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
         {/* Real-Time Google Maps Style Autocomplete Dropdown Menu */}
         {showDropdown && suggestions.length > 0 && (
           <div className="absolute left-0 right-0 top-full mt-1.5 bg-[#0F1420] border border-white/20 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.9)] z-[9999] max-h-64 overflow-y-auto py-1 backdrop-blur-2xl animate-fadeIn">
-            {userCoords && (
-              <div className="px-4 py-1.5 text-[10px] font-semibold text-emerald-400 border-b border-white/10 flex items-center gap-1.5">
-                <MapPin className="w-3 h-3" />
-                <span>Showing nearest places to your location</span>
-              </div>
-            )}
+            <div className="px-4 py-1.5 text-[10px] font-semibold text-emerald-400 border-b border-white/10 flex items-center gap-1.5">
+              <MapPin className="w-3 h-3" />
+              <span>
+                {userCoords && suggestions.some((s) => s.distanceKm !== undefined)
+                  ? 'Showing nearest places to your location'
+                  : 'Showing popular places in your country'}
+              </span>
+            </div>
             {suggestions.map((item, idx) => (
               <button
                 key={idx}
@@ -286,7 +424,9 @@ export function LocationPicker({ value, onChange }: LocationPickerProps) {
         )}
       </div>
 
-      {searchError && <p className="text-xs text-rose-400">{searchError}</p>}
+      {(searchError || locateError) && (
+        <p className="text-xs text-rose-400">{searchError || locateError}</p>
+      )}
 
       <div className="map-picker relative rounded-lg overflow-hidden border border-[var(--border-color)]">
         <div ref={mapRef} className="w-full h-56" />
