@@ -220,20 +220,37 @@ export function LocationPicker({ value, onChange }: LocationPickerProps) {
           {searching ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : 'Find'}
         </button>
 
-        {/* Real-time Autocomplete Dropdown Suggestions Menu */}
+        {/* Real-Time Google Maps Style Autocomplete Dropdown Menu */}
         {showDropdown && suggestions.length > 0 && (
-          <div className="absolute left-0 right-0 top-full mt-1 bg-[var(--bg-card)] border border-[var(--border-color)] rounded-2xl shadow-2xl z-[100] max-h-60 overflow-y-auto py-1 animate-scaleUp">
-            {suggestions.map((item, idx) => (
-              <button
-                key={idx}
-                type="button"
-                onClick={() => handleSelectSuggestion(item)}
-                className="w-full text-left px-3.5 py-2.5 hover:bg-[var(--accent)]/15 text-xs text-[var(--text-primary)] border-b border-white/5 last:border-0 flex items-start gap-2.5 transition-colors"
-              >
-                <MapPin className="w-4 h-4 text-[var(--accent)] shrink-0 mt-0.5" />
-                <span className="flex-1 leading-snug truncate">{item.display_name}</span>
-              </button>
-            ))}
+          <div className="absolute left-0 right-0 top-full mt-1.5 bg-[#0F1420] border border-white/20 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.9)] z-[9999] max-h-64 overflow-y-auto py-1 backdrop-blur-2xl animate-fadeIn">
+            {suggestions.map((item, idx) => {
+              const parts = item.display_name.split(', ');
+              const title = parts[0];
+              const subtitle = parts.slice(1).join(', ');
+
+              return (
+                <button
+                  key={idx}
+                  type="button"
+                  onClick={() => handleSelectSuggestion(item)}
+                  className="w-full text-left px-4 py-3 hover:bg-white/10 text-xs text-white border-b border-white/5 last:border-0 flex items-start gap-3 transition-colors group"
+                >
+                  <div className="p-2 rounded-xl bg-white/5 border border-white/10 text-[var(--accent)] group-hover:bg-[var(--accent)] group-hover:text-white shrink-0 transition-colors">
+                    <MapPin className="w-4 h-4" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="font-semibold text-white truncate text-xs group-hover:text-[var(--accent)] transition-colors">
+                      {title}
+                    </div>
+                    {subtitle && (
+                      <div className="text-[11px] text-slate-400 truncate mt-0.5 leading-tight">
+                        {subtitle}
+                      </div>
+                    )}
+                  </div>
+                </button>
+              );
+            })}
           </div>
         )}
       </div>
