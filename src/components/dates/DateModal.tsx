@@ -88,8 +88,8 @@ export function DateModal({ isOpen, onClose, onSave, initialData }: DateModalPro
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn overflow-y-auto">
-      <div className="bg-[var(--bg-card)] border border-[var(--border-color)] w-full max-w-lg my-8 rounded-2xl p-6 sm:p-7 shadow-2xl relative">
+    <div className="fixed inset-0 z-[60] flex items-start sm:items-center justify-center p-4 pt-20 sm:pt-24 pb-12 bg-black/75 backdrop-blur-md animate-fadeIn overflow-y-auto">
+      <div className="bg-[var(--bg-card)] border border-[var(--border-color)] w-full max-w-lg my-auto rounded-3xl p-6 sm:p-8 shadow-[0_25px_60px_rgba(0,0,0,0.8)] relative z-10">
         <button
           onClick={onClose}
           className="absolute top-5 right-5 p-1.5 rounded-full text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-white/5 transition-colors"
@@ -135,8 +135,17 @@ export function DateModal({ isOpen, onClose, onSave, initialData }: DateModalPro
               type="datetime-local"
               required
               value={dateTime}
+              onClick={(e) => {
+                try {
+                  if ('showPicker' in e.currentTarget) {
+                    e.currentTarget.showPicker();
+                  }
+                } catch {
+                  // Fallback for older browsers
+                }
+              }}
               onChange={(e) => setDateTime(e.target.value)}
-              className="w-full px-3.5 py-2.5 rounded-lg bg-[var(--bg-main)] border border-[var(--border-color)] text-[var(--text-primary)] focus:outline-none focus:border-[var(--accent)] text-sm transition-colors"
+              className="w-full px-3.5 py-2.5 rounded-xl bg-[var(--bg-main)] border border-[var(--border-color)] text-[var(--text-primary)] focus:outline-none focus:border-[var(--accent)] text-sm transition-colors cursor-pointer"
             />
           </div>
 

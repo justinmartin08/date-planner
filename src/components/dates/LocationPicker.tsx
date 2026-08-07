@@ -110,6 +110,54 @@ export function LocationPicker({ value, onChange }: LocationPickerProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const [suggestions, setSuggestions] = useState<Array<{ lat: string; lon: string; display_name: string }>>([]);
+  const [showDropdown, setShowDropdown] = useState(false);
+
+  // Debounced search for real-time autocomplete suggestions
+  useEffect(() => {
+    if (!query.trim() || query.length < 2) {
+      setSuggestions([]);
+      setShowDropdown(false);
+      return;
+    }
+
+    const timer = setTimeout(async () => {
+      setSearching(true);
+      try {
+        const res = await fetch(
+          `https://nominatim.openstreetmap.org/search?format=jsonv2&q=${encodeURIComponent(query)}&limit=6`,
+          { headers: { Accept: 'application/json' } }
+        );
+        const results = await res.json();
+        if (Array.isArray(results) && results.length > 0) {
+          setSuggestions(results);
+          setShowDropdown(true);
+          setSearchError('');
+        } else {
+          setSuggestions([]);
+          setShowDropdown(false);
+        }
+      } catch {
+        setSuggestions([]);
+      } finally {
+        setSearching(false);
+      }
+    }, 350);
+
+    return () => clearTimeout(timer);
+  }, [query]);
+
+  const handleSelectSuggestion = async (item: { lat: string; lon: string; display_name: string }) => {
+    setShowDropdown(false);
+    setSuggestions([]);
+    const L = await import('leaflet');
+    const latNum = parseFloat(item.lat);
+    const lngNum = parseFloat(item.lon);
+    placeMarker(L, latNum, lngNum);
+    leafletMapRef.current?.setView([latNum, lngNum], 16);
+    onChange({ address: item.display_name, lat: latNum, lng: lngNum });
+  };
+
   const handleSearch = async (e?: React.SyntheticEvent) => {
     if (e) e.preventDefault();
     if (!query.trim() || !leafletMapRef.current) return;
@@ -117,21 +165,17 @@ export function LocationPicker({ value, onChange }: LocationPickerProps) {
     setSearchError('');
     try {
       const res = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=jsonv2&q=${encodeURIComponent(query)}&limit=1`,
+        `https://nominatim.openstreetmap.org/search?format=jsonv2&q=${encodeURIComponent(query)}&limit=6`,
         { headers: { Accept: 'application/json' } }
       );
       const results = await res.json();
       if (!results?.length) {
         setSearchError('No matching place found. Try a different search.');
+        setShowDropdown(false);
         return;
       }
-      const { lat, lon, display_name } = results[0];
-      const L = await import('leaflet');
-      const latNum = parseFloat(lat);
-      const lngNum = parseFloat(lon);
-      placeMarker(L, latNum, lngNum);
-      leafletMapRef.current.setView([latNum, lngNum], 16);
-      onChange({ address: display_name, lat: latNum, lng: lngNum });
+      setSuggestions(results);
+      setShowDropdown(true);
     } catch {
       setSearchError('Search failed. Please try again.');
     } finally {
@@ -148,30 +192,50 @@ export function LocationPicker({ value, onChange }: LocationPickerProps) {
   };
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-2 relative">
       <div className="relative">
-        <Search className="w-4 h-4 text-[var(--text-muted)] absolute left-3 top-1/2 -translate-y-1/2" />
+        <Search className="w-4 h-4 text-[var(--text-muted)] absolute left-3.5 top-1/2 -translate-y-1/2" />
         <input
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
+          onFocus={() => {
+            if (suggestions.length > 0) setShowDropdown(true);
+          }}
           onKeyDown={(e) => {
             if (e.key === 'Enter') {
               e.preventDefault();
               handleSearch(e);
             }
           }}
-          placeholder="Search a place, or click the map"
-          className="w-full pl-9 pr-20 py-2.5 rounded-lg bg-[var(--bg-main)] border border-[var(--border-color)] text-[var(--text-primary)] focus:outline-none focus:border-[var(--accent)] text-sm transition-colors"
+          placeholder="Search a place, mall, or landmark..."
+          className="w-full pl-9 pr-20 py-2.5 rounded-xl bg-[var(--bg-main)] border border-[var(--border-color)] text-[var(--text-primary)] focus:outline-none focus:border-[var(--accent)] text-sm transition-colors"
         />
         <button
           type="button"
           onClick={handleSearch}
           disabled={searching}
-          className="absolute right-1.5 top-1.5 px-3 py-1 rounded-md bg-[var(--accent)] text-white text-xs font-medium disabled:opacity-50"
+          className="absolute right-1.5 top-1.5 px-3 py-1 rounded-lg bg-[var(--accent)] text-white text-xs font-medium disabled:opacity-50"
         >
           {searching ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : 'Find'}
         </button>
+
+        {/* Real-time Autocomplete Dropdown Suggestions Menu */}
+        {showDropdown && suggestions.length > 0 && (
+          <div className="absolute left-0 right-0 top-full mt-1 bg-[var(--bg-card)] border border-[var(--border-color)] rounded-2xl shadow-2xl z-[100] max-h-60 overflow-y-auto py-1 animate-scaleUp">
+            {suggestions.map((item, idx) => (
+              <button
+                key={idx}
+                type="button"
+                onClick={() => handleSelectSuggestion(item)}
+                className="w-full text-left px-3.5 py-2.5 hover:bg-[var(--accent)]/15 text-xs text-[var(--text-primary)] border-b border-white/5 last:border-0 flex items-start gap-2.5 transition-colors"
+              >
+                <MapPin className="w-4 h-4 text-[var(--accent)] shrink-0 mt-0.5" />
+                <span className="flex-1 leading-snug truncate">{item.display_name}</span>
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       {searchError && <p className="text-xs text-rose-400">{searchError}</p>}
