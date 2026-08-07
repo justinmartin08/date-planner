@@ -110,12 +110,12 @@ export function LocationPicker({ value, onChange }: LocationPickerProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const [suggestions, setSuggestions] = useState<Array<{ lat: string; lon: string; display_name: string }>>([]);
+  const [suggestions, setSuggestions] = useState<Array<{ title: string; address: string; lat: number; lng: number }>>([]);
   const [showDropdown, setShowDropdown] = useState(false);
 
-  // Debounced search for real-time autocomplete suggestions
+  // Debounced search querying server-side API endpoint (/api/location/search)
   useEffect(() => {
-    if (!query.trim() || query.length < 2) {
+    if (!query.trim() || query.trim().length < 2) {
       setSuggestions([]);
       setShowDropdown(false);
       return;
@@ -124,13 +124,10 @@ export function LocationPicker({ value, onChange }: LocationPickerProps) {
     const timer = setTimeout(async () => {
       setSearching(true);
       try {
-        const res = await fetch(
-          `https://nominatim.openstreetmap.org/search?format=jsonv2&q=${encodeURIComponent(query)}&limit=6`,
-          { headers: { Accept: 'application/json' } }
-        );
-        const results = await res.json();
-        if (Array.isArray(results) && results.length > 0) {
-          setSuggestions(results);
+        const res = await fetch(`/api/location/search?q=${encodeURIComponent(query.trim())}`);
+        const data = await res.json();
+        if (data?.results?.length > 0) {
+          setSuggestions(data.results);
           setShowDropdown(true);
           setSearchError('');
         } else {
@@ -142,20 +139,18 @@ export function LocationPicker({ value, onChange }: LocationPickerProps) {
       } finally {
         setSearching(false);
       }
-    }, 350);
+    }, 300);
 
     return () => clearTimeout(timer);
   }, [query]);
 
-  const handleSelectSuggestion = async (item: { lat: string; lon: string; display_name: string }) => {
+  const handleSelectSuggestion = async (item: { title: string; address: string; lat: number; lng: number }) => {
     setShowDropdown(false);
     setSuggestions([]);
     const L = await import('leaflet');
-    const latNum = parseFloat(item.lat);
-    const lngNum = parseFloat(item.lon);
-    placeMarker(L, latNum, lngNum);
-    leafletMapRef.current?.setView([latNum, lngNum], 16);
-    onChange({ address: item.display_name, lat: latNum, lng: lngNum });
+    placeMarker(L, item.lat, item.lng);
+    leafletMapRef.current?.setView([item.lat, item.lng], 16);
+    onChange({ address: item.address, lat: item.lat, lng: item.lng });
   };
 
   const handleSearch = async (e?: React.SyntheticEvent) => {
@@ -164,17 +159,14 @@ export function LocationPicker({ value, onChange }: LocationPickerProps) {
     setSearching(true);
     setSearchError('');
     try {
-      const res = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=jsonv2&q=${encodeURIComponent(query)}&limit=6`,
-        { headers: { Accept: 'application/json' } }
-      );
-      const results = await res.json();
-      if (!results?.length) {
-        setSearchError('No matching place found. Try a different search.');
+      const res = await fetch(`/api/location/search?q=${encodeURIComponent(query.trim())}`);
+      const data = await res.json();
+      if (!data?.results?.length) {
+        setSearchError('No matching places found. Try typing a specific mall, city, or landmark.');
         setShowDropdown(false);
         return;
       }
-      setSuggestions(results);
+      setSuggestions(data.results);
       setShowDropdown(true);
     } catch {
       setSearchError('Search failed. Please try again.');
@@ -208,7 +200,7 @@ export function LocationPicker({ value, onChange }: LocationPickerProps) {
               handleSearch(e);
             }
           }}
-          placeholder="Search a place, mall, or landmark..."
+          placeholder="Search any place, mall, city, or landmark worldwide..."
           className="w-full pl-9 pr-20 py-2.5 rounded-xl bg-[var(--bg-main)] border border-[var(--border-color)] text-[var(--text-primary)] focus:outline-none focus:border-[var(--accent)] text-sm transition-colors"
         />
         <button
@@ -223,34 +215,28 @@ export function LocationPicker({ value, onChange }: LocationPickerProps) {
         {/* Real-Time Google Maps Style Autocomplete Dropdown Menu */}
         {showDropdown && suggestions.length > 0 && (
           <div className="absolute left-0 right-0 top-full mt-1.5 bg-[#0F1420] border border-white/20 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.9)] z-[9999] max-h-64 overflow-y-auto py-1 backdrop-blur-2xl animate-fadeIn">
-            {suggestions.map((item, idx) => {
-              const parts = item.display_name.split(', ');
-              const title = parts[0];
-              const subtitle = parts.slice(1).join(', ');
-
-              return (
-                <button
-                  key={idx}
-                  type="button"
-                  onClick={() => handleSelectSuggestion(item)}
-                  className="w-full text-left px-4 py-3 hover:bg-white/10 text-xs text-white border-b border-white/5 last:border-0 flex items-start gap-3 transition-colors group"
-                >
-                  <div className="p-2 rounded-xl bg-white/5 border border-white/10 text-[var(--accent)] group-hover:bg-[var(--accent)] group-hover:text-white shrink-0 transition-colors">
-                    <MapPin className="w-4 h-4" />
+            {suggestions.map((item, idx) => (
+              <button
+                key={idx}
+                type="button"
+                onClick={() => handleSelectSuggestion(item)}
+                className="w-full text-left px-4 py-3 hover:bg-white/10 text-xs text-white border-b border-white/5 last:border-0 flex items-start gap-3 transition-colors group"
+              >
+                <div className="p-2 rounded-xl bg-white/5 border border-white/10 text-[var(--accent)] group-hover:bg-[var(--accent)] group-hover:text-white shrink-0 transition-colors">
+                  <MapPin className="w-4 h-4" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="font-semibold text-white truncate text-xs group-hover:text-[var(--accent)] transition-colors">
+                    {item.title}
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="font-semibold text-white truncate text-xs group-hover:text-[var(--accent)] transition-colors">
-                      {title}
+                  {item.address && item.address !== item.title && (
+                    <div className="text-[11px] text-slate-400 truncate mt-0.5 leading-tight">
+                      {item.address}
                     </div>
-                    {subtitle && (
-                      <div className="text-[11px] text-slate-400 truncate mt-0.5 leading-tight">
-                        {subtitle}
-                      </div>
-                    )}
-                  </div>
-                </button>
-              );
-            })}
+                  )}
+                </div>
+              </button>
+            ))}
           </div>
         )}
       </div>
