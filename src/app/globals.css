@@ -101,6 +101,46 @@
   --font-heading: 'Outfit', sans-serif;
 }
 
+/* Guests on the login page have no `data-theme` yet — respect their OS dark mode */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    color-scheme: dark;
+
+    --bg-main: #14110d;
+    --bg-elevated: #1d1914;
+    --bg-card: rgba(29, 25, 20, 0.86);
+    --bg-card-hover: #241f18;
+
+    --bg-chip: rgba(255, 255, 255, 0.06);
+    --bg-chip-hover: rgba(255, 255, 255, 0.11);
+
+    --border-color: rgba(255, 166, 88, 0.16);
+    --border-glow: #ff7a00;
+
+    --text-primary: #f8f2e6;
+    --text-muted: #b9a88f;
+
+    --accent: #ff7a00;
+    --accent-hover: #e76a00;
+    --accent-soft: rgba(255, 122, 0, 0.16);
+    --accent-glow: rgba(255, 122, 0, 0.32);
+
+    --berry: #ffa54d;
+    --berry-soft: rgba(255, 165, 77, 0.16);
+    --accent-strawberry: #ffa54d;
+
+    --sun: #ffb347;
+    --sun-soft: rgba(255, 179, 71, 0.22);
+
+    --badge-bg: rgba(255, 122, 0, 0.18);
+    --badge-text: #ffbc8a;
+
+    --shadow-soft: 0 20px 44px -20px rgba(255, 122, 0, 0.28), 0 8px 22px -14px rgba(0, 0, 0, 0.6);
+
+    --font-heading: 'Outfit', sans-serif;
+  }
+}
+
 body {
   background-color: var(--bg-main);
   color: var(--text-primary);
@@ -358,4 +398,62 @@ body {
 .bg-dotgrid {
   background-image: radial-gradient(color-mix(in srgb, var(--text-muted) 22%, transparent) 1px, transparent 1px);
   background-size: 22px 22px;
+}
+
+/* ------------------------------- Micro-animations -------------------------
+   Sleek input/button hover · focus · state transitions for the login page.
+   Table-free drills on `bg-chip` so they hold on both themes.
+   ------------------------------------------------------------------------- */
+
+/* Inputs: gentle lift + glow ring on focus, soft border tint on hover */
+.field {
+  transition: border-color 0.35s var(--ease-out), background-color 0.35s ease,
+    box-shadow 0.35s var(--ease-out), transform 0.35s var(--ease-out);
+}
+.field:hover {
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--border-color));
+}
+.field:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px var(--accent-soft), 0 10px 30px -12px var(--accent-glow);
+  transform: translateY(-1px);
+}
+
+/* Icon inside focused inputs shifts to the accent */
+.field-icon {
+  transition: color 0.35s var(--ease-out), transform 0.35s var(--ease-out);
+}
+:focus-within > .field-icon {
+  color: var(--accent);
+  transform: scale(1.08);
+}
+
+/* Aurora gradient button — shifting gradient + rising sheen */
+@keyframes auroraShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+.btn-aurora {
+  background-size: 220% 220%;
+  animation: auroraShift 6s ease-in-out infinite;
+  transition: transform 0.25s var(--ease-spring), box-shadow 0.3s var(--ease-out);
+}
+.btn-aurora:hover {
+  transform: translateY(-2px) scale(1.015);
+  box-shadow: 0 16px 40px -12px var(--accent-glow);
+}
+
+/* Ripple-ish press */
+.btn-press:active {
+  transform: translateY(1px) scale(0.985);
+}
+
+/* Label that glows on its field focus */
+@keyframes labelFlicker {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.75; }
+}
+.field:focus ~ label,
+.field:focus + label {
+  animation: labelFlicker 1.2s ease-in-out infinite;
 }
