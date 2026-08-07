@@ -2,8 +2,6 @@ import { NextResponse } from 'next/server';
 import { getSession, setSessionCookie } from '@/lib/auth';
 import { prisma } from '@/lib/db';
 import { UserTheme } from '@/lib/types';
-import { writeFile, mkdir } from 'fs/promises';
-import path from 'path';
 
 export async function POST(request: Request) {
   const session = await getSession();

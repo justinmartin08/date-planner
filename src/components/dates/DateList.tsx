@@ -5,8 +5,8 @@ import useSWR from 'swr';
 import { DateProposalItem, UserSession } from '@/lib/types';
 import { DateCard } from './DateCard';
 import { DateModal } from './DateModal';
-import { Plus, Calendar, Filter } from 'lucide-react';
-import { PokeballEmblem, StrawberryEmblem, TigerPawEmblem, TigerClawMark } from '@/components/ui/Motifs';
+import { Plus, Filter } from 'lucide-react';
+import { PokeballEmblem, TigerPawEmblem, TigerClawMark } from '@/components/ui/Motifs';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 

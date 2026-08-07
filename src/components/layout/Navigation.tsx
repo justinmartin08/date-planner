@@ -5,12 +5,12 @@ import { useRouter } from 'next/navigation';
 import { useTheme } from './ThemeProvider';
 import { TigerIcon, ElectricSparkIcon } from '../ui/Motifs';
 import { ProfileSettingsModal } from './ProfileSettingsModal';
-import { LogOut, Calendar, Mail, User, Bell } from 'lucide-react';
+import { LogOut, Calendar, CalendarDays, Mail, User, Bell } from 'lucide-react';
 import { UserSession } from '@/lib/types';
 
 interface NavigationProps {
-  activeTab: 'dates' | 'letters';
-  setActiveTab: (tab: 'dates' | 'letters') => void;
+  activeTab: 'dates' | 'letters' | 'calendar';
+  setActiveTab: (tab: 'dates' | 'letters' | 'calendar') => void;
   unreadCount?: number;
   onUserUpdate?: (user: UserSession) => void;
 }
@@ -29,7 +29,7 @@ export function Navigation({
     try {
       await fetch('/api/auth/logout', { method: 'POST' });
       setUser(null);
-      window.location.href = '/login';
+      router.push('/login');
     } catch (err) {
       console.error('Logout error:', err);
     }
@@ -83,6 +83,18 @@ export function Navigation({
             >
               <Calendar className="w-4 h-4" />
               <span className="hidden sm:inline">Date Planner</span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab('calendar')}
+              className={`flex items-center gap-2 px-3 sm:px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                activeTab === 'calendar'
+                  ? 'bg-[var(--accent)] text-white'
+                  : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
+              }`}
+            >
+              <CalendarDays className="w-4 h-4" />
+              <span className="hidden sm:inline">Calendar</span>
             </button>
 
             <button

@@ -13,6 +13,8 @@ export function ThemeMascotAnimation({ theme }: ThemeMascotAnimationProps) {
   const [showFire, setShowFire] = useState(false);
 
   useEffect(() => {
+    // Hydration-safe: animate only after mount so SSR/CSR markup matches.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
     if (theme === 'pokemon') {
       const timer1 = setTimeout(() => setIsOpen(true), 400);

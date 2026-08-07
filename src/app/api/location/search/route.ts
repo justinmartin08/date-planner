@@ -26,7 +26,6 @@ interface SearchResult {
   lat: number;
   lng: number;
   distanceKm?: number;
-  category?: string;
 }
 
 // Photon (Komoot) — free geocoder that ranks by distance when lat/lon are given.
@@ -81,7 +80,6 @@ async function searchPhoton(
         userLat !== null && userLng !== null
           ? getDistanceKm(userLat, userLng, itemLat, itemLng)
           : undefined,
-      category: props.osm_value ?? undefined,
     });
   }
   return results;
@@ -132,126 +130,8 @@ async function nominatimSearch(q: string, userLat: number | null, userLng: numbe
   });
 }
 
-// Overpass API — real "popular places near me" category search (Google-style),
-// e.g. every cafe/restaurant/park within a radius of the user.
-interface CategoryDef {
-  label: string;
-  tags: string[];
-  radiusKm: number;
-}
-
-interface OverpassElement {
-  type: 'node' | 'way' | 'relation';
-  lat?: number;
-  lon?: number;
-  center?: { lat: number; lon: number };
-  tags?: Record<string, string>;
-}
-
-const CATEGORY_QUERIES: Record<string, CategoryDef> = {
-  cafe: { label: 'Cafés', tags: ['amenity=cafe'], radiusKm: 8 },
-  restaurant: {
-    label: 'Restaurants',
-    tags: ['amenity=restaurant', 'amenity=fast_food', 'amenity=food_court'],
-    radiusKm: 8,
-  },
-  park: { label: 'Parks', tags: ['leisure=park', 'leisure=garden'], radiusKm: 10 },
-  mall: { label: 'Malls', tags: ['shop=mall', 'amenity=marketplace'], radiusKm: 15 },
-  cinema: { label: 'Cinema & theaters', tags: ['amenity=cinema', 'amenity=theatre'], radiusKm: 15 },
-  beach: { label: 'Beaches', tags: ['natural=beach'], radiusKm: 25 },
-  attraction: {
-    label: 'Attractions',
-    tags: ['tourism=attraction', 'tourism=museum', 'tourism=zoo', 'tourism=theme_park'],
-    radiusKm: 15,
-  },
-};
-
-const OVERPASS_MIRRORS = [
-  'https://overpass-api.de/api/interpreter',
-  'https://overpass.kumi.systems/api/interpreter',
-];
-
-async function queryOverpass(mirror: string, query: string): Promise<OverpassElement[] | null> {
-  const res = await fetch(mirror, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'text/plain',
-      'Accept': 'application/json',
-      'User-Agent': 'DatePlannerWebsite/1.0 (https://date-planner-website-theta.vercel.app)',
-    },
-    body: query,
-    signal: AbortSignal.timeout(12000),
-  });
-  if (!res.ok) return null;
-
-  const data = (await res.json()) as { elements?: OverpassElement[] };
-  return data?.elements ?? null;
-}
-
-async function searchByCategory(category: string, userLat: number, userLng: number): Promise<SearchResult[]> {
-  const def = CATEGORY_QUERIES[category];
-  if (!def) return [];
-
-  const radius = def.radiusKm * 1000;
-  const statements = def.tags
-    .map((tag) => {
-      const [k, v] = tag.split('=');
-      return `node["${k}"="${v}"](around:${radius},${userLat},${userLng});way["${k}"="${v}"](around:${radius},${userLat},${userLng});`;
-    })
-    .join('');
-  const query = `[out:json][timeout:15];(${statements});out center 15;`;
-
-  // Alternate the starting mirror so traffic spreads across the public API
-  const start = Math.random() < 0.5 ? 0 : 1;
-  const mirrors = [OVERPASS_MIRRORS[start], OVERPASS_MIRRORS[1 - start]];
-
-  for (const mirror of mirrors) {
-    try {
-      const elements = await queryOverpass(mirror, query);
-      if (!elements || elements.length === 0) continue;
-
-      const results: SearchResult[] = [];
-      const seen = new Set<string>();
-      for (const el of elements) {
-        const tags = el?.tags ?? {};
-        const name = tags.name || tags['name:en'] || tags.brand || '';
-        const lat = el.type === 'node' ? el.lat : el.center?.lat;
-        const lng = el.type === 'node' ? el.lon : el.center?.lon;
-        if (typeof lat !== 'number' || typeof lng !== 'number' || !name) continue;
-
-        const key = `${lat.toFixed(4)},${lng.toFixed(4)}`;
-        if (seen.has(key)) continue;
-        seen.add(key);
-
-        const address = [
-          tags['addr:street'],
-          tags['addr:suburb'] || tags['addr:city'] || tags['addr:place'],
-          tags['addr:province'] || tags['addr:region'],
-        ]
-          .filter(Boolean)
-          .join(', ');
-
-        results.push({
-          title: name,
-          address: address || 'Local spot',
-          lat,
-          lng,
-          distanceKm: getDistanceKm(userLat, userLng, lat, lng),
-          category: def.label,
-        });
-      }
-      if (results.length > 0) return results;
-    } catch {
-      // try the next mirror
-    }
-  }
-
-  return [];
-}
-
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
-  const category = searchParams.get('cat');
   const query = searchParams.get('q');
   const userLatStr = searchParams.get('lat');
   const userLngStr = searchParams.get('lng');
@@ -261,12 +141,6 @@ export async function GET(request: Request) {
   const hasCoords = userLat !== null && userLng !== null && !isNaN(userLat) && !isNaN(userLng);
 
   try {
-    // Category mode: popular places near the selected location
-    if (category && hasCoords) {
-      const results = await searchByCategory(category, userLat as number, userLng as number);
-      return NextResponse.json({ results: results.slice(0, 8) });
-    }
-
     if (!query || query.trim().length < 2) {
       return NextResponse.json({ results: [] });
     }

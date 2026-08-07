@@ -29,6 +29,8 @@ export function DateModal({ isOpen, onClose, onSave, initialData }: DateModalPro
 
   useEffect(() => {
     if (initialData) {
+      // Reset form fields when a different plan (or draft) is opened.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setTitle(initialData.title);
       setDescription(initialData.description);
       const dt = new Date(initialData.dateTime);

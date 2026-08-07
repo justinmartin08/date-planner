@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import useSWR from 'swr';
 import { MessageItem, UserSession, AttachmentItem } from '@/lib/types';
 import { MessageCard } from './MessageCard';
@@ -26,23 +26,26 @@ export function LetterThread({ currentUser }: { currentUser: UserSession }) {
   const messages = data?.messages || [];
   const unreadCount = data?.unreadCount || 0;
 
+  // Auto-mark incoming letters as read exactly once per message, avoiding
+  // re-processing on every re-render/refetch.
+  const processedReadRef = useRef<Set<string>>(new Set());
+
   useEffect(() => {
-    if (messages.length > 0) {
-      const unreadReceived = messages.filter(
-        (m) => m.recipientId === currentUser.id && !m.isRead
-      );
-      if (unreadReceived.length > 0) {
-        unreadReceived.forEach(async (m) => {
-          try {
-            await fetch(`/api/messages/${m.id}/read`, { method: 'POST' });
-          } catch (err) {
-            console.error('Failed to mark read:', err);
-          }
-        });
-        mutate();
-      }
-    }
-  }, [messages, currentUser.id, mutate]);
+    const list = data?.messages || [];
+    const unreadReceived = list.filter(
+      (m) => m.recipientId === currentUser.id && !m.isRead && !processedReadRef.current.has(m.id)
+    );
+    if (unreadReceived.length === 0) return;
+
+    unreadReceived.forEach((m) => processedReadRef.current.add(m.id));
+    Promise.all(
+      unreadReceived.map((m) =>
+        fetch(`/api/messages/${m.id}/read`, { method: 'POST' }).catch((err) =>
+          console.error('Failed to mark read:', err)
+        )
+      )
+    ).then(() => mutate());
+  }, [data, currentUser.id, mutate]);
 
   const handleSendMessage = async (msgData: {
     title?: string;

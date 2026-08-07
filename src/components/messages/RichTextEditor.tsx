@@ -9,6 +9,28 @@ interface RichTextEditorProps {
   placeholder?: string;
 }
 
+function ToolbarButton({
+  onClick,
+  title,
+  children,
+}: {
+  onClick: () => void;
+  title: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      onMouseDown={(e) => e.preventDefault()}
+      onClick={onClick}
+      title={title}
+      className="p-1.5 rounded-md text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-white/10 transition-colors"
+    >
+      {children}
+    </button>
+  );
+}
+
 /**
  * Minimal contentEditable-based rich text editor: bold, italic, alignment,
  * and link insertion via document.execCommand. Intentionally lightweight —
@@ -45,26 +67,6 @@ export function RichTextEditor({ html, onChange, placeholder }: RichTextEditorPr
     const url = window.prompt('Link URL');
     if (url) exec('createLink', url);
   };
-
-  const ToolbarButton = ({
-    onClick,
-    title,
-    children,
-  }: {
-    onClick: () => void;
-    title: string;
-    children: React.ReactNode;
-  }) => (
-    <button
-      type="button"
-      onMouseDown={(e) => e.preventDefault()}
-      onClick={onClick}
-      title={title}
-      className="p-1.5 rounded-md text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-white/10 transition-colors"
-    >
-      {children}
-    </button>
-  );
 
   return (
     <div className="rounded-lg border border-[var(--border-color)] bg-[var(--bg-main)] overflow-hidden">

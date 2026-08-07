@@ -6,8 +6,6 @@ import { RichTextEditor } from './RichTextEditor';
 import { VoiceRecorder } from './VoiceRecorder';
 import { AttachmentItem } from '@/lib/types';
 
-interface PendingAttachment extends AttachmentItem {}
-
 interface ComposeMessageModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -15,7 +13,7 @@ interface ComposeMessageModalProps {
     title?: string;
     content: string;
     contentHtml?: string;
-    attachments?: Omit<PendingAttachment, 'id'>[];
+    attachments?: Omit<AttachmentItem, 'id'>[];
   }) => Promise<void>;
   partnerName: string;
 }
@@ -28,7 +26,7 @@ export function ComposeMessageModal({
 }: ComposeMessageModalProps) {
   const [title, setTitle] = useState('');
   const [html, setHtml] = useState('');
-  const [pendingFiles, setPendingFiles] = useState<Omit<PendingAttachment, 'id'>[]>([]);
+  const [pendingFiles, setPendingFiles] = useState<Omit<AttachmentItem, 'id'>[]>([]);
   const [voiceBlob, setVoiceBlob] = useState<Blob | null>(null);
   const [voiceDuration, setVoiceDuration] = useState(0);
   const [uploading, setUploading] = useState(false);

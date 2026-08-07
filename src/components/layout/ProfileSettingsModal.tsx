@@ -4,7 +4,7 @@ import React, { useState, useRef } from 'react';
 import { UserSession } from '@/lib/types';
 import { TigerIcon, ElectricSparkIcon } from '../ui/Motifs';
 import { ImageCropperModal } from '../ui/ImageCropperModal';
-import { X, Upload, User, Lock, Check, Loader2, Camera } from 'lucide-react';
+import { X, User, Lock, Check, Loader2, Camera } from 'lucide-react';
 
 interface ProfileSettingsModalProps {
   isOpen: boolean;
@@ -96,7 +96,7 @@ export function ProfileSettingsModal({
           setCropperOpen(true);
         };
         img.src = rawData;
-      } catch (err: unknown) {
+      } catch {
         setProfileError('Failed to read image file.');
       }
     };

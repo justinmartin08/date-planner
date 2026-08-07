@@ -1,20 +1,7 @@
 'use client';
 
 import React, { useEffect, useRef, useState, useCallback } from 'react';
-import {
-  MapPin,
-  Search,
-  Loader2,
-  X,
-  Crosshair,
-  Coffee,
-  UtensilsCrossed,
-  Trees,
-  ShoppingBag,
-  Clapperboard,
-  Waves,
-  Landmark,
-} from 'lucide-react';
+import { MapPin, Search, Loader2, X, Crosshair } from 'lucide-react';
 import type { Map as LeafletMap, Marker as LeafletMarker } from 'leaflet';
 
 export interface PickedLocation {
@@ -33,16 +20,6 @@ interface LocationPickerProps {
 const DEFAULT_CENTER: [number, number] = [14.5, 121.0];
 const DEFAULT_ZOOM = 12;
 
-const POPULAR_CATEGORIES = [
-  { cat: 'cafe', label: 'Cafés', icon: Coffee },
-  { cat: 'restaurant', label: 'Restaurants', icon: UtensilsCrossed },
-  { cat: 'park', label: 'Parks', icon: Trees },
-  { cat: 'mall', label: 'Malls', icon: ShoppingBag },
-  { cat: 'cinema', label: 'Cinema', icon: Clapperboard },
-  { cat: 'beach', label: 'Beaches', icon: Waves },
-  { cat: 'attraction', label: 'Attractions', icon: Landmark },
-] as const;
-
 export function LocationPicker({ value, onChange }: LocationPickerProps) {
   const mapRef = useRef<HTMLDivElement | null>(null);
   const leafletMapRef = useRef<LeafletMap | null>(null);
@@ -55,7 +32,6 @@ export function LocationPicker({ value, onChange }: LocationPickerProps) {
     Array<{ title: string; address: string; lat: number; lng: number; distanceKm?: number }>
   >([]);
   const [showDropdown, setShowDropdown] = useState(false);
-  const [showPopular, setShowPopular] = useState(false);
   const [userCoords, setUserCoords] = useState<{ lat: number; lng: number } | null>(null);
   const [locating, setLocating] = useState(false);
   const [locateError, setLocateError] = useState('');
@@ -191,11 +167,9 @@ export function LocationPicker({ value, onChange }: LocationPickerProps) {
         if (!trimmed || trimmed.length < 2) {
           setSuggestions([]);
           setShowDropdown(false);
-          setShowPopular(true);
           return;
         }
 
-        setShowPopular(false);
         setSearching(true);
         try {
           const searchUrl = userCoords
@@ -226,7 +200,6 @@ export function LocationPicker({ value, onChange }: LocationPickerProps) {
 
   const handleSelectSuggestion = async (item: { title: string; address: string; lat: number; lng: number }) => {
     setShowDropdown(false);
-    setShowPopular(false);
     setSuggestions([]);
     const L = await import('leaflet');
     placeMarker(L, item.lat, item.lng);
@@ -260,43 +233,6 @@ export function LocationPicker({ value, onChange }: LocationPickerProps) {
     }
   };
 
-  const handleCategorySearch = async (cat: string) => {
-    setShowPopular(false);
-    setShowDropdown(false);
-    setSearchError('');
-
-    let coords = userCoords;
-    if (!coords) {
-      coords = await getPosition();
-      if (coords) {
-        setUserCoords(coords);
-        if (leafletMapRef.current) {
-          leafletMapRef.current.setView([coords.lat, coords.lng], 13);
-        }
-      }
-    }
-    if (!coords) {
-      setLocateError('Share your location to see popular places near you.');
-      return;
-    }
-
-    setSearching(true);
-    try {
-      const res = await fetch(`/api/location/search?cat=${cat}&lat=${coords.lat}&lng=${coords.lng}`);
-      const data = await res.json();
-      if (data?.results?.length > 0) {
-        setSuggestions(data.results);
-        setShowDropdown(true);
-      } else {
-        setSearchError('No places found nearby. Try another category.');
-      }
-    } catch {
-      setSearchError('Could not load nearby places. Try again.');
-    } finally {
-      setSearching(false);
-    }
-  };
-
   const handleClear = () => {
     if (markerRef.current && leafletMapRef.current) {
       leafletMapRef.current.removeLayer(markerRef.current);
@@ -315,7 +251,6 @@ export function LocationPicker({ value, onChange }: LocationPickerProps) {
           onChange={(e) => setQuery(e.target.value)}
           onFocus={() => {
             if (showDropdown && suggestions.length > 0) setShowDropdown(true);
-            if (!query.trim() && !showDropdown && !showPopular) setShowPopular(true);
           }}
           onKeyDown={(e) => {
             if (e.key === 'Enter') {
@@ -350,34 +285,6 @@ export function LocationPicker({ value, onChange }: LocationPickerProps) {
           {searching ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : 'Find'}
         </button>
 
-        {/* Popular places panel (Google Maps style suggestions) */}
-        {showPopular && !showDropdown && (
-          <div className="absolute left-0 right-0 top-full mt-1.5 bg-[#0F1420] border border-white/20 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.9)] z-[9999] py-2 backdrop-blur-2xl animate-fadeIn">
-            <div className="px-4 pb-1.5 text-[10px] font-semibold text-emerald-400 border-b border-white/10 pb-2 flex items-center gap-1.5">
-              <MapPin className="w-3 h-3" />
-              <span>
-                {userCoords ? 'Popular places near you' : 'Popular places near me — share location for the closest picks'}
-              </span>
-            </div>
-            <div className="grid grid-cols-2 gap-1.5 p-2">
-              {POPULAR_CATEGORIES.map((c) => {
-                const Icon = c.icon;
-                return (
-                  <button
-                    key={c.cat}
-                    type="button"
-                    onClick={() => handleCategorySearch(c.cat)}
-                    className="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-white/5 border border-white/10 text-left text-xs text-white hover:bg-white/10 hover:border-[var(--accent)] transition-colors"
-                  >
-                    <Icon className="w-4 h-4 text-[var(--accent)] shrink-0" />
-                    <span className="truncate">{c.label}</span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        )}
-
         {/* Real-Time Google Maps Style Autocomplete Dropdown Menu */}
         {showDropdown && suggestions.length > 0 && (
           <div className="absolute left-0 right-0 top-full mt-1.5 bg-[#0F1420] border border-white/20 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.9)] z-[9999] max-h-64 overflow-y-auto py-1 backdrop-blur-2xl animate-fadeIn">
@@ -386,7 +293,7 @@ export function LocationPicker({ value, onChange }: LocationPickerProps) {
               <span>
                 {userCoords && suggestions.some((s) => s.distanceKm !== undefined)
                   ? 'Showing nearest places to your location'
-                  : 'Showing popular places in your country'}
+                  : 'Showing places in your country'}
               </span>
             </div>
             {suggestions.map((item, idx) => (

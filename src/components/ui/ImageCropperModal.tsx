@@ -29,6 +29,7 @@ export function ImageCropperModal({
   // Reset controls on new image
   useEffect(() => {
     if (imageSrc) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setZoom(1);
       setRotation(0);
       setPan({ x: 0, y: 0 });
