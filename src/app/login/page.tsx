@@ -1,40 +1,21 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { User, LogIn } from 'lucide-react';
-import { ThemePatternBg, CoupleMark, StrawberryEmblem, TigerPawEmblem } from '@/components/ui/Motifs';
-import type { UserTheme } from '@/lib/types';
-
-function prefersDark() {
-  if (typeof window === 'undefined') return false;
-  return window.matchMedia?.('(prefers-color-scheme: dark)')?.matches ?? false;
-}
+import {
+  PokeballEmblem,
+  StrawberryEmblem,
+  EmberIcon,
+  TigerClawMark,
+  Sparkle,
+} from '@/components/ui/Motifs';
 
 export default function LoginPage() {
-  const [dark, setDark] = useState(prefersDark);
-  const active: UserTheme = dark ? 'tiger' : 'pokemon';
-
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(true);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-
-  // Follow the OS color scheme (no data-theme yet on the login page).
-  useEffect(() => {
-    const mq = window.matchMedia('(prefers-color-scheme: dark)');
-    const onChange = (e: MediaQueryListEvent) => setDark(e.matches);
-    mq.addEventListener?.('change', onChange);
-    return () => mq.removeEventListener?.('change', onChange);
-  }, []);
-
-  // Wear the ambient theme while signing in.
-  useEffect(() => {
-    document.documentElement.setAttribute('data-theme', active);
-    return () => {
-      document.documentElement.removeAttribute('data-theme');
-    };
-  }, [active]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -68,41 +49,48 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-[var(--bg-main)]">
-      <ThemePatternBg theme={active} />
+    <main className="login-combined min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Shared ambient backdrop — Cielo's sky + berry, Yani's ember + tiger */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              'radial-gradient(120% 90% at 85% -10%, rgba(125,172,255,0.30) 0%, transparent 55%), radial-gradient(90% 70% at 0% 110%, rgba(251,61,109,0.10) 0%, transparent 50%), linear-gradient(160deg, #eef4ff 0%, #e9f1ff 45%, #fff3e4 100%)',
+          }}
+        />
+        <div className="absolute -top-24 -right-24 w-96 h-96 rounded-full opacity-40 [filter:blur(100px)]" style={{ background: 'rgba(125,172,255,0.35)' }} />
+        <div className="absolute bottom-0 -left-24 w-80 h-80 rounded-full opacity-35 [filter:blur(100px)]" style={{ background: 'rgba(255,140,60,0.28)' }} />
+        <div className="absolute inset-0 bg-dotgrid opacity-[0.5]" style={{ WebkitMaskImage: 'radial-gradient(80% 60% at 50% 0%, black 30%, transparent 75%)' }} />
+        {/* Cielo motifs */}
+        <StrawberryEmblem className="absolute top-[16%] right-[9%] w-8 h-8 opacity-90 ambient-float" />
+        <PokeballEmblem className="absolute top-[26%] left-[6%] w-9 h-9 opacity-50 ambient-drift" />
+        <Sparkle className="absolute top-[38%] right-[22%] w-3 h-3 text-[#ffc53d] ambient-float" />
+        <Sparkle className="absolute bottom-[20%] left-[18%] w-2.5 h-2.5 text-[#fb3d6d] ambient-drift" />
+        {/* Yani motifs */}
+        <EmberIcon className="absolute top-[18%] left-[26%] w-6 h-6 text-[#ff7a00]/80 ambient-float" />
+        <EmberIcon className="absolute bottom-[26%] right-[16%] w-7 h-7 text-[#e76a00]/70 ambient-drift" />
+        <TigerClawMark className="absolute bottom-[14%] left-[8%] w-10 h-10 text-[#ff7a00]/15 ambient-drift" />
+      </div>
 
-      <div className="relative z-10 w-full max-w-md theme-swap" key={active}>
-        {/* Crown + name */}
-        <div className="text-center mb-7">
-          <div className="inline-flex items-center gap-3 mb-5">
-            <span className="w-11 h-11 rounded-2xl border border-[var(--border-color)] bg-[var(--bg-card)] flex items-center justify-center text-[var(--accent)] shadow-[var(--shadow-soft)]">
-              <CoupleMark className="w-6 h-6" />
-            </span>
-            <div className="text-left leading-tight">
-              <div className="text-[15px] font-bold tracking-tight text-[var(--text-primary)]">
-                Cielo <span className="text-[var(--text-muted)] font-medium">&amp;</span> Yani
-              </div>
-              <div className="text-[11px] text-[var(--text-muted)] mt-0.5">welcome back, you two</div>
-            </div>
-          </div>
-        </div>
-
+      <div className="relative z-10 w-full max-w-md">
         {/* Login card */}
         <div className="glass rounded-3xl p-7 sm:p-8 animate-scaleUp">
-          <div className="flex items-center gap-3 mb-6">
-            <span className="p-2 rounded-xl bg-[var(--accent-soft)] text-[var(--accent)]">
-              {active === 'tiger' ? <TigerPawEmblem className="w-6 h-6" /> : <StrawberryEmblem className="w-6 h-6" />}
-            </span>
-            <div>
-              <h1 className="text-xl font-extrabold tracking-tight text-[var(--text-primary)]">
-                Welcome<span className="text-transparent bg-clip-text" style={{ backgroundImage: 'linear-gradient(90deg, var(--accent), var(--berry))' }}> back</span>
-              </h1>
-              <p className="text-xs text-[var(--text-muted)] mt-0.5">Sign in to see your dates and letters.</p>
-            </div>
+          <div className="text-center mb-6">
+            <h1 className="text-2xl font-extrabold tracking-tight text-[var(--text-primary)]">
+              Welcome{' '}
+              <span
+                className="text-transparent bg-clip-text"
+                style={{ backgroundImage: 'linear-gradient(90deg, var(--accent), var(--berry-solid))' }}
+              >
+                back
+              </span>
+            </h1>
+            <p className="text-xs text-[var(--text-muted)] mt-1.5">Sign in to see your dates and letters.</p>
           </div>
 
           {error && (
-            <div className="mb-5 p-3.5 rounded-2xl bg-[var(--berry-soft)] border border-[var(--accent-soft)] text-[var(--text-primary)] text-xs font-medium text-center animate-shake">
+            <div className="mb-5 p-3.5 rounded-2xl bg-[var(--berry-soft)] border border-[var(--accent-soft)] text-[var(--text)] text-xs font-medium text-center animate-shake">
               {error}
             </div>
           )}
@@ -119,7 +107,7 @@ export default function LoginPage() {
                 placeholder="cielo or yani"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                className="field w-full pl-10 pr-4 py-3 rounded-2xl bg-[var(--bg-elevated)] border border-[var(--border-color)] text-[var(--text-primary)] focus:outline-none text-sm placeholder:text-[var(--text-muted)]/60"
+                className="field w-full pl-10 pr-4 py-3 rounded-2xl bg-[var(--bg-elevated)] border border-[var(--border-color)] text-[var(--text)] focus:outline-none text-sm placeholder:text-[var(--text-muted)]/60"
               />
             </div>
 
@@ -137,7 +125,7 @@ export default function LoginPage() {
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="field w-full pl-10 pr-4 py-3 rounded-2xl bg-[var(--bg-elevated)] border border-[var(--border-color)] text-[var(--text-primary)] focus:outline-none text-sm placeholder:text-[var(--text-muted)]/60"
+                className="field w-full pl-10 pr-4 py-3 rounded-2xl bg-[var(--bg-elevated)] border border-[var(--border-color)] text-[var(--text)] focus:outline-none text-sm placeholder:text-[var(--text-muted)]/60"
               />
             </div>
 
@@ -150,7 +138,7 @@ export default function LoginPage() {
                   className="w-4 h-4 rounded bg-[var(--bg-elevated)] border-[var(--border-color)] focus:ring-0 cursor-pointer transition-transform active:scale-90"
                   style={{ accentColor: 'var(--accent)' }}
                 />
-                <span className="group-hover:text-[var(--text-primary)] transition-colors">Remember me</span>
+                <span className="group-hover:text-[var(--text)] transition-colors">Remember me</span>
               </label>
             </div>
 
@@ -159,8 +147,8 @@ export default function LoginPage() {
               disabled={loading}
               className="sheen btn-aurora btn-press relative w-full py-3.5 rounded-2xl text-white font-bold text-sm shadow-xl disabled:opacity-60 mt-3 flex items-center justify-center gap-2 overflow-hidden"
               style={{
-                background: 'linear-gradient(120deg, var(--accent) 0%, var(--accent-hover) 55%, var(--berry) 130%)',
-                boxShadow: '0 12px 28px -8px var(--accent-glow)',
+                background: 'linear-gradient(120deg, #2563eb 0%, #d946ef 55%, #fb3d6d 100%)',
+                boxShadow: '0 12px 28px -8px rgba(99, 102, 241, 0.4)',
               }}
             >
               {loading ? (

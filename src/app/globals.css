@@ -101,6 +101,87 @@
   --font-heading: 'Outfit', sans-serif;
 }
 
+/* ------------------------ App-wide mode variants ----------------------------
+   The app keeps the owner's personality (theme) but still honors a light/dark
+   switch via `data-mode` on <html>. Each theme now ships both modes.
+   ------------------------------------------------------------------------- */
+
+/* Cielo × dark — deep navy sky, berry still pops at night */
+[data-theme='pokemon'][data-mode='dark'] {
+  color-scheme: dark;
+
+  --bg-main: #0a1120;
+  --bg-elevated: #111b30;
+  --bg-card: rgba(17, 27, 48, 0.86);
+  --bg-card-hover: #16213a;
+
+  --bg-chip: rgba(147, 197, 255, 0.08);
+  --bg-chip-hover: rgba(147, 197, 255, 0.16);
+
+  --border-color: rgba(147, 197, 255, 0.2);
+  --border-glow: #5da2ff;
+
+  --text-primary: #eaf2ff;
+  --text-muted: #8fa3c4;
+
+  --accent: #5da2ff;
+  --accent-hover: #3b82f6;
+  --accent-soft: rgba(93, 162, 255, 0.16);
+  --accent-glow: rgba(59, 130, 246, 0.38);
+
+  --berry: #ff6b92;
+  --berry-soft: rgba(255, 107, 146, 0.16);
+  --accent-strawberry: #ff6b92;
+
+  --sun: #ffd77a;
+  --sun-soft: rgba(255, 215, 122, 0.2);
+
+  --badge-bg: rgba(93, 162, 255, 0.18);
+  --badge-text: #7eb4ff;
+
+  --shadow-soft: 0 20px 48px -20px rgba(0, 0, 0, 0.6), 0 8px 22px -14px rgba(59, 130, 246, 0.28);
+
+  --font-heading: 'Outfit', sans-serif;
+}
+
+/* Yani — light: warm sand + amber, so the ember still glows in daylight */
+[data-theme='tiger'][data-mode='light'] {
+  color-scheme: light;
+
+  --bg-main: #fdf6ec;
+  --bg-elevated: #ffffff;
+  --bg-card: rgba(255, 255, 255, 0.9);
+  --bg-card-hover: #ffffff;
+
+  --bg-chip: rgba(240, 120, 10, 0.07);
+  --bg-chip-hover: rgba(240, 120, 10, 0.13);
+
+  --border-color: rgba(235, 140, 40, 0.24);
+  --border-glow: #ff7a00;
+
+  --text-primary: #3a2b17;
+  --text-muted: #98805e;
+
+  --accent: #ff7a00;
+  --accent-hover: #e76a00;
+  --accent-soft: rgba(255, 122, 0, 0.12);
+  --accent-glow: rgba(255, 122, 0, 0.28);
+
+  --berry: #e8590c;
+  --berry-soft: rgba(232, 89, 12, 0.14);
+  --accent-strawberry: #e8590c;
+
+  --sun: #ffb347;
+  --sun-soft: rgba(255, 179, 71, 0.3);
+
+  --badge-bg: rgba(255, 122, 0, 0.12);
+  --badge-text: #c26100;
+
+  --shadow-soft: 0 18px 44px -20px rgba(150, 100, 20, 0.3);
+
+  --font-heading: 'Outfit', sans-serif;
+}
+
 /* Guests on the login page have no `data-theme` yet — respect their OS dark mode */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme]) {
@@ -148,6 +229,46 @@ body {
   min-height: 100vh;
   transition: background-color 0.4s ease, color 0.4s ease;
   scroll-behavior: smooth;
+}
+
+/* ------------------- Login — one shared duotone for the whole page ----------
+   The sign-in screen belongs to the couple, not to one owner. It blends
+   Cielo's sky-blue + strawberry with Yani's ember so nobody has to pick.
+   Scoped tokens make the glass / fields / gradients above self-sufficient.
+   ------------------------------------------------------------------------- */
+.login-combined {
+  color-scheme: light;
+
+  --bg-main: #eef4ff;
+  --bg-elevated: #ffffff;
+  --bg-card: rgba(255, 255, 255, 0.82);
+  --bg-card-hover: #ffffff;
+
+  --bg-chip: rgba(59, 130, 246, 0.08);
+  --bg-chip-hover: rgba(59, 130, 246, 0.14);
+
+  --border-color: rgba(80, 110, 190, 0.16);
+  --border-glow: #5aa7ff;
+
+  --text: #1e2b4a;
+  --text-primary: #1e2b4a;
+  --text-muted: #6b7a9e;
+
+  --accent: #2563eb;
+  --accent-hover: #1d4ed8;
+  --accent-soft: rgba(37, 99, 235, 0.1);
+  --accent-glow: rgba(59, 130, 246, 0.32);
+
+  --berry: #fb3d6d;
+  --berry-solid: #fb3d6d;
+  --berry-soft: rgba(251, 61, 109, 0.14);
+
+  --sun: #ffc53d;
+  --sun-soft: rgba(255, 197, 61, 0.35);
+
+  --shadow-soft: 0 18px 48px -22px rgba(50, 90, 180, 0.4);
+
+  --font-heading: 'Outfit', sans-serif;
 }
 
 /* Themed pages sometimes paint their own gradient; keep the baseline calm. */

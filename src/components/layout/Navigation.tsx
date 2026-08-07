@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useTheme } from './ThemeProvider';
 import { StrawberryEmblem, TigerPawEmblem, CoupleMark } from '../ui/Motifs';
 import { ProfileSettingsModal } from './ProfileSettingsModal';
-import { LogOut, Calendar, CalendarDays, Mail, Bell, User } from 'lucide-react';
+import { LogOut, Calendar, CalendarDays, Mail, Bell, User, Sun, Moon } from 'lucide-react';
 import { UserSession } from '@/lib/types';
 
 interface NavigationProps {
@@ -27,7 +27,7 @@ export function Navigation({
   unreadCount = 0,
   onUserUpdate,
 }: NavigationProps) {
-  const { user, setUser } = useTheme();
+  const { user, setUser, mode, toggleMode } = useTheme();
   const router = useRouter();
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
@@ -117,6 +117,13 @@ export function Navigation({
 
           {/* Controls */}
           <div className="flex items-center gap-1.5 shrink-0">
+            <button
+              onClick={toggleMode}
+              className="p-2 rounded-xl bg-[var(--bg-chip)] hover:bg-[var(--bg-chip-hover)] text-[var(--text-muted)] hover:text-[var(--accent)] transition-colors"
+              title={mode === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+            >
+              {mode === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            </button>
             <button
               onClick={() => {
                 if (typeof window !== 'undefined' && 'Notification' in window) {
