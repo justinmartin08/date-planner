@@ -63,40 +63,40 @@
   --font-heading: 'Outfit', sans-serif;
 }
 
-/* ------------------------------- Yani ── warm caramel & tiger ember -------- */
+/* ------------------------------- Yani ── white & tiger ember -------------- */
 [data-theme='tiger'] {
-  color-scheme: dark;
+  color-scheme: light;
 
-  --bg-main: #3a2d1e;                  /* warm mocha — no more near-black */
-  --bg-elevated: #463727;
-  --bg-card: rgba(70, 55, 39, 0.88);
-  --bg-card-hover: #52402d;
+  --bg-main: #fff8ee;                  /* warm ivory — no black anywhere */
+  --bg-elevated: #ffffff;
+  --bg-card: rgba(255, 255, 255, 0.92);
+  --bg-card-hover: #ffffff;
 
-  --bg-chip: rgba(255, 190, 120, 0.1);
-  --bg-chip-hover: rgba(255, 190, 120, 0.18);
+  --bg-chip: rgba(255, 122, 0, 0.09);
+  --bg-chip-hover: rgba(255, 122, 0, 0.16);
 
-  --border-color: rgba(255, 176, 96, 0.22);
+  --border-color: rgba(255, 122, 0, 0.28);
   --border-glow: #ff8a1f;
 
-  --text-primary: #fff4e2;
-  --text-muted: #d9c4a3;
+  --text-primary: #5c3a12;
+  --text-muted: #b07a3a;
 
-  --accent: #ff8a1f;
-  --accent-hover: #f07a00;
-  --accent-soft: rgba(255, 138, 31, 0.18);
-  --accent-glow: rgba(255, 138, 31, 0.4);
+  --accent: #ff7a00;
+  --accent-hover: #e76a00;
+  --accent-soft: rgba(255, 122, 0, 0.12);
+  --accent-glow: rgba(255, 122, 0, 0.35);
 
-  --berry: #ffb366;
-  --berry-soft: rgba(255, 179, 102, 0.18);
-  --accent-strawberry: #ffb366;
+  --berry: #ff9d3d;
+  --berry-soft: rgba(255, 157, 61, 0.16);
+  --accent-strawberry: #ff9d3d;
 
-  --sun: #ffc46b;
-  --sun-soft: rgba(255, 196, 107, 0.28);
+  --sun: #ffb347;
+  --sun-soft: rgba(255, 179, 71, 0.3);
 
-  --badge-bg: rgba(255, 138, 31, 0.2);
-  --badge-text: #ffd0a5;
+  --badge-bg: rgba(255, 122, 0, 0.15);
+  --badge-text: #c26100;
 
-  --shadow-soft: 0 20px 44px -20px rgba(255, 138, 31, 0.32), 0 8px 22px -14px rgba(0, 0, 0, 0.4);
+  --shadow-soft: 0 18px 44px -20px rgba(230, 130, 20, 0.4);
 
   --font-heading: 'Outfit', sans-serif;
 }
@@ -144,40 +144,40 @@
   --font-heading: 'Outfit', sans-serif;
 }
 
-/* Yani — light: warm sand + amber, so the ember still glows in daylight */
+/* Yani — light: pure white, so the ember pops even brighter */
 [data-theme='tiger'][data-mode='light'] {
   color-scheme: light;
 
-  --bg-main: #fdf6ec;
-  --bg-elevated: #ffffff;
-  --bg-card: rgba(255, 255, 255, 0.9);
+  --bg-main: #ffffff;
+  --bg-elevated: #fffdf9;
+  --bg-card: rgba(255, 255, 255, 0.96);
   --bg-card-hover: #ffffff;
 
   --bg-chip: rgba(240, 120, 10, 0.07);
-  --bg-chip-hover: rgba(240, 120, 10, 0.13);
+  --bg-chip-hover: rgba(240, 120, 10, 0.14);
 
-  --border-color: rgba(235, 140, 40, 0.24);
+  --border-color: rgba(235, 140, 40, 0.28);
   --border-glow: #ff7a00;
 
-  --text-primary: #3a2b17;
-  --text-muted: #98805e;
+  --text-primary: #4a3010;
+  --text-muted: #a97c42;
 
   --accent: #ff7a00;
   --accent-hover: #e76a00;
   --accent-soft: rgba(255, 122, 0, 0.12);
-  --accent-glow: rgba(255, 122, 0, 0.28);
+  --accent-glow: rgba(255, 122, 0, 0.3);
 
-  --berry: #e8590c;
-  --berry-soft: rgba(232, 89, 12, 0.14);
-  --accent-strawberry: #e8590c;
+  --berry: #ff8f2e;
+  --berry-soft: rgba(255, 143, 46, 0.14);
+  --accent-strawberry: #ff8f2e;
 
   --sun: #ffb347;
-  --sun-soft: rgba(255, 179, 71, 0.3);
+  --sun-soft: rgba(255, 179, 71, 0.32);
 
-  --badge-bg: rgba(255, 122, 0, 0.12);
+  --badge-bg: rgba(255, 122, 0, 0.13);
   --badge-text: #c26100;
 
-  --shadow-soft: 0 18px 44px -20px rgba(150, 100, 20, 0.3);
+  --shadow-soft: 0 16px 40px -20px rgba(230, 130, 20, 0.28);
 
   --font-heading: 'Outfit', sans-serif;
 }
@@ -185,38 +185,38 @@
 /* Guests on the login page have no `data-theme` yet — respect their OS dark mode */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme]) {
-     color-scheme: dark;
+     color-scheme: light;
 
-    --bg-main: #3a2d1e;
-    --bg-elevated: #463727;
-    --bg-card: rgba(70, 55, 39, 0.88);
-    --bg-card-hover: #52402d;
+    --bg-main: #fff8ee;
+    --bg-elevated: #ffffff;
+    --bg-card: rgba(255, 255, 255, 0.92);
+    --bg-card-hover: #ffffff;
 
-    --bg-chip: rgba(255, 190, 120, 0.1);
-    --bg-chip-hover: rgba(255, 190, 120, 0.18);
+    --bg-chip: rgba(255, 122, 0, 0.09);
+    --bg-chip-hover: rgba(255, 122, 0, 0.16);
 
-    --border-color: rgba(255, 176, 96, 0.22);
+    --border-color: rgba(255, 122, 0, 0.28);
     --border-glow: #ff8a1f;
 
-    --text-primary: #fff4e2;
-    --text-muted: #d9c4a3;
+    --text-primary: #5c3a12;
+    --text-muted: #b07a3a;
 
-    --accent: #ff8a1f;
-    --accent-hover: #f07a00;
-    --accent-soft: rgba(255, 138, 31, 0.18);
-    --accent-glow: rgba(255, 138, 31, 0.4);
+    --accent: #ff7a00;
+    --accent-hover: #e76a00;
+    --accent-soft: rgba(255, 122, 0, 0.12);
+    --accent-glow: rgba(255, 122, 0, 0.35);
 
-    --berry: #ffb366;
-    --berry-soft: rgba(255, 179, 102, 0.18);
-    --accent-strawberry: #ffb366;
+    --berry: #ff9d3d;
+    --berry-soft: rgba(255, 157, 61, 0.16);
+    --accent-strawberry: #ff9d3d;
 
-    --sun: #ffc46b;
-    --sun-soft: rgba(255, 196, 107, 0.28);
+    --sun: #ffb347;
+    --sun-soft: rgba(255, 179, 71, 0.3);
 
-    --badge-bg: rgba(255, 138, 31, 0.2);
-    --badge-text: #ffd0a5;
+    --badge-bg: rgba(255, 122, 0, 0.15);
+    --badge-text: #c26100;
 
-    --shadow-soft: 0 20px 44px -20px rgba(255, 138, 31, 0.32), 0 8px 22px -14px rgba(0, 0, 0, 0.4);
+    --shadow-soft: 0 18px 44px -20px rgba(230, 130, 20, 0.4);
 
     --font-heading: 'Outfit', sans-serif;
   }
