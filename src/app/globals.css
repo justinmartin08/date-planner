@@ -63,40 +63,40 @@
   --font-heading: 'Outfit', sans-serif;
 }
 
-/* ------------------------------- Yani ── warm espresso & tiger ember ----- */
+/* ------------------------------- Yani ── warm caramel & tiger ember -------- */
 [data-theme='tiger'] {
   color-scheme: dark;
 
-  --bg-main: #14110d;
-  --bg-elevated: #1d1914;
-  --bg-card: rgba(29, 25, 20, 0.86);
-  --bg-card-hover: #241f18;
+  --bg-main: #3a2d1e;                  /* warm mocha — no more near-black */
+  --bg-elevated: #463727;
+  --bg-card: rgba(70, 55, 39, 0.88);
+  --bg-card-hover: #52402d;
 
-  --bg-chip: rgba(255, 255, 255, 0.06);
-  --bg-chip-hover: rgba(255, 255, 255, 0.11);
+  --bg-chip: rgba(255, 190, 120, 0.1);
+  --bg-chip-hover: rgba(255, 190, 120, 0.18);
 
-  --border-color: rgba(255, 166, 88, 0.16);
-  --border-glow: #ff7a00;
+  --border-color: rgba(255, 176, 96, 0.22);
+  --border-glow: #ff8a1f;
 
-  --text-primary: #f8f2e6;
-  --text-muted: #b9a88f;
+  --text-primary: #fff4e2;
+  --text-muted: #d9c4a3;
 
-  --accent: #ff7a00;
-  --accent-hover: #e76a00;
-  --accent-soft: rgba(255, 122, 0, 0.16);
-  --accent-glow: rgba(255, 122, 0, 0.32);
+  --accent: #ff8a1f;
+  --accent-hover: #f07a00;
+  --accent-soft: rgba(255, 138, 31, 0.18);
+  --accent-glow: rgba(255, 138, 31, 0.4);
 
-  --berry: #ffa54d;
-  --berry-soft: rgba(255, 165, 77, 0.16);
-  --accent-strawberry: #ffa54d;
+  --berry: #ffb366;
+  --berry-soft: rgba(255, 179, 102, 0.18);
+  --accent-strawberry: #ffb366;
 
-  --sun: #ffb347;
-  --sun-soft: rgba(255, 179, 71, 0.22);
+  --sun: #ffc46b;
+  --sun-soft: rgba(255, 196, 107, 0.28);
 
-  --badge-bg: rgba(255, 122, 0, 0.18);
-  --badge-text: #ffbc8a;
+  --badge-bg: rgba(255, 138, 31, 0.2);
+  --badge-text: #ffd0a5;
 
-  --shadow-soft: 0 20px 44px -20px rgba(255, 122, 0, 0.28), 0 8px 22px -14px rgba(0, 0, 0, 0.6);
+  --shadow-soft: 0 20px 44px -20px rgba(255, 138, 31, 0.32), 0 8px 22px -14px rgba(0, 0, 0, 0.4);
 
   --font-heading: 'Outfit', sans-serif;
 }
@@ -185,38 +185,38 @@
 /* Guests on the login page have no `data-theme` yet — respect their OS dark mode */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme]) {
-    color-scheme: dark;
+     color-scheme: dark;
 
-    --bg-main: #14110d;
-    --bg-elevated: #1d1914;
-    --bg-card: rgba(29, 25, 20, 0.86);
-    --bg-card-hover: #241f18;
+    --bg-main: #3a2d1e;
+    --bg-elevated: #463727;
+    --bg-card: rgba(70, 55, 39, 0.88);
+    --bg-card-hover: #52402d;
 
-    --bg-chip: rgba(255, 255, 255, 0.06);
-    --bg-chip-hover: rgba(255, 255, 255, 0.11);
+    --bg-chip: rgba(255, 190, 120, 0.1);
+    --bg-chip-hover: rgba(255, 190, 120, 0.18);
 
-    --border-color: rgba(255, 166, 88, 0.16);
-    --border-glow: #ff7a00;
+    --border-color: rgba(255, 176, 96, 0.22);
+    --border-glow: #ff8a1f;
 
-    --text-primary: #f8f2e6;
-    --text-muted: #b9a88f;
+    --text-primary: #fff4e2;
+    --text-muted: #d9c4a3;
 
-    --accent: #ff7a00;
-    --accent-hover: #e76a00;
-    --accent-soft: rgba(255, 122, 0, 0.16);
-    --accent-glow: rgba(255, 122, 0, 0.32);
+    --accent: #ff8a1f;
+    --accent-hover: #f07a00;
+    --accent-soft: rgba(255, 138, 31, 0.18);
+    --accent-glow: rgba(255, 138, 31, 0.4);
 
-    --berry: #ffa54d;
-    --berry-soft: rgba(255, 165, 77, 0.16);
-    --accent-strawberry: #ffa54d;
+    --berry: #ffb366;
+    --berry-soft: rgba(255, 179, 102, 0.18);
+    --accent-strawberry: #ffb366;
 
-    --sun: #ffb347;
-    --sun-soft: rgba(255, 179, 71, 0.22);
+    --sun: #ffc46b;
+    --sun-soft: rgba(255, 196, 107, 0.28);
 
-    --badge-bg: rgba(255, 122, 0, 0.18);
-    --badge-text: #ffbc8a;
+    --badge-bg: rgba(255, 138, 31, 0.2);
+    --badge-text: #ffd0a5;
 
-    --shadow-soft: 0 20px 44px -20px rgba(255, 122, 0, 0.28), 0 8px 22px -14px rgba(0, 0, 0, 0.6);
+    --shadow-soft: 0 20px 44px -20px rgba(255, 138, 31, 0.32), 0 8px 22px -14px rgba(0, 0, 0, 0.4);
 
     --font-heading: 'Outfit', sans-serif;
   }
