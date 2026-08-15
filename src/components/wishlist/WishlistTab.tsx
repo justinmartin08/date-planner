@@ -9,16 +9,14 @@ import { WishlistCelebration } from './WishlistCelebration';
 import {
   Plus,
   Search,
-  Filter,
-  Sparkles,
   Gift,
   CheckCircle2,
-  SlidersHorizontal,
   ArrowUpDown,
-  ShoppingBag,
-  HeartHandshake,
+  User,
+  Sparkles,
+  Info,
 } from 'lucide-react';
-import { StrawberryEmblem, TigerPawEmblem, CoupleMark } from '@/components/ui/Motifs';
+import { StrawberryEmblem, TigerPawEmblem } from '@/components/ui/Motifs';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
@@ -36,10 +34,13 @@ const CATEGORIES = [
 ];
 
 export function WishlistTab({ currentUser }: { currentUser: UserSession }) {
-  // Active owner tab: 'cielo' or 'yani'
-  const [activeOwner, setActiveOwner] = useState<'cielo' | 'yani'>(
-    currentUser.username === 'cielo' ? 'cielo' : 'yani'
-  );
+  // Determine partner details
+  const isCielo = currentUser.username === 'cielo';
+  const partnerUsername = isCielo ? 'yani' : 'cielo';
+  const partnerDisplayName = isCielo ? 'Yani' : 'Cielo';
+
+  // Sub-view: 'partner' (default) or 'my'
+  const [viewMode, setViewMode] = useState<'partner' | 'my'>('partner');
 
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
@@ -62,14 +63,16 @@ export function WishlistTab({ currentUser }: { currentUser: UserSession }) {
 
   const allWishes = data?.wishes || [];
 
-  // Filter wishes by selected owner tab
-  const ownerWishes = useMemo(() => {
-    return allWishes.filter((w) => w.owner.username === activeOwner);
-  }, [allWishes, activeOwner]);
+  // Filter wishes by viewMode
+  const activeOwnerUsername = viewMode === 'partner' ? partnerUsername : currentUser.username;
+
+  const currentViewWishes = useMemo(() => {
+    return allWishes.filter((w) => w.owner.username === activeOwnerUsername);
+  }, [allWishes, activeOwnerUsername]);
 
   // Apply search, category, status, and sort filters
   const filteredWishes = useMemo(() => {
-    return ownerWishes
+    return currentViewWishes
       .filter((item) => {
         // Status filter
         if (statusFilter === 'ACTIVE' && item.status === 'GRANTED') return false;
@@ -90,7 +93,6 @@ export function WishlistTab({ currentUser }: { currentUser: UserSession }) {
         return true;
       })
       .sort((a, b) => {
-        // Keep active items before granted items in priority views
         if (a.status === 'GRANTED' && b.status !== 'GRANTED') return 1;
         if (a.status !== 'GRANTED' && b.status === 'GRANTED') return -1;
 
@@ -112,19 +114,15 @@ export function WishlistTab({ currentUser }: { currentUser: UserSession }) {
         }
         return 0;
       });
-  }, [ownerWishes, statusFilter, selectedCategory, searchQuery, sortBy]);
+  }, [currentViewWishes, statusFilter, selectedCategory, searchQuery, sortBy]);
 
-  // Statistics calculation for the active tab
-  const activeCount = ownerWishes.filter((w) => w.status !== 'GRANTED').length;
-  const grantedCount = ownerWishes.filter((w) => w.status === 'GRANTED').length;
-  const totalEstimated = ownerWishes.reduce((sum, w) => sum + (w.price || 0), 0);
+  // Counts
+  const activeCount = currentViewWishes.filter((w) => w.status !== 'GRANTED').length;
+  const grantedCount = currentViewWishes.filter((w) => w.status === 'GRANTED').length;
 
-  // Target owner ID for new wishes created while on this tab
-  const targetOwnerUser = allWishes.find((w) => w.owner.username === activeOwner)?.owner;
-  const targetOwnerId =
-    currentUser.username === activeOwner
-      ? currentUser.id
-      : targetOwnerUser?.id || (currentUser.username === 'cielo' ? 'yani' : 'cielo');
+  // Find partner's user ID if available
+  const partnerUser = allWishes.find((w) => w.owner.username === partnerUsername)?.owner;
+  const defaultTargetOwnerId = viewMode === 'partner' ? partnerUser?.id || partnerUsername : currentUser.id;
 
   const handleSaveWish = async (formData: {
     title: string;
@@ -154,7 +152,7 @@ export function WishlistTab({ currentUser }: { currentUser: UserSession }) {
   };
 
   const handleDeleteWish = async (id: string) => {
-    if (!confirm('Are you sure you want to remove this item from the wishlist?')) return;
+    if (!confirm('Remove this item from the wishlist?')) return;
 
     mutate(
       (curr) => (curr ? { wishes: curr.wishes.filter((w) => w.id !== id) } : curr),
@@ -198,7 +196,7 @@ export function WishlistTab({ currentUser }: { currentUser: UserSession }) {
 
   return (
     <div className="space-y-6">
-      {/* Header Banner with Owner Switcher and Stats */}
+      {/* Header Banner */}
       <div
         className="rise-in relative overflow-hidden p-6 sm:p-7 rounded-3xl border transition-all"
         style={{
@@ -214,18 +212,22 @@ export function WishlistTab({ currentUser }: { currentUser: UserSession }) {
                 <Gift className="w-5 h-5" />
               </span>
               <span className="text-xs uppercase tracking-widest font-bold text-[var(--accent)]">
-                Our Wishlist Sanctuary
+                Wishlist Sanctuary
               </span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[var(--text-primary)]">
-              {activeOwner === 'cielo' ? "Cielo's Wishes & Dreams" : "Yani's Wishes & Dreams"}
+              {viewMode === 'partner'
+                ? `${partnerDisplayName}'s Wishlist`
+                : 'My Wishes'}
             </h1>
             <p className="text-xs sm:text-sm text-[var(--text-muted)] max-w-lg leading-relaxed">
-              Things we desire, gift ideas, and future treasures for each other.
+              {viewMode === 'partner'
+                ? `Gift ideas, dreams, and surprises saved for ${partnerDisplayName}.`
+                : `Things you desire that ${partnerDisplayName} can see and fulfill for you.`}
             </p>
           </div>
 
-          {/* Add Wish Primary Action */}
+          {/* Add Wish Action Button */}
           <button
             onClick={() => {
               setEditingWish(null);
@@ -238,39 +240,49 @@ export function WishlistTab({ currentUser }: { currentUser: UserSession }) {
             }}
           >
             <Plus className="w-4 h-4" />
-            <span>Add a Wish</span>
+            <span>{viewMode === 'my' ? 'Add to My Wishes' : `Add for ${partnerDisplayName}`}</span>
           </button>
         </div>
 
-        {/* Dual Owner Tabs Switcher */}
+        {/* View Switcher Tabs: Partner's List vs My Wishes */}
         <div className="mt-6 pt-5 border-t border-[var(--border-color)] flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-2 bg-[var(--bg-card)] p-1 rounded-2xl border border-[var(--border-color)]">
+            {/* Partner's Wishlist Button */}
             <button
-              onClick={() => setActiveOwner('cielo')}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all ${
-                activeOwner === 'cielo'
-                  ? 'bg-blue-500 text-white shadow-md'
+              onClick={() => setViewMode('partner')}
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
+                viewMode === 'partner'
+                  ? 'bg-[var(--accent)] text-white shadow-md'
                   : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
               }`}
             >
-              <StrawberryEmblem className="w-4 h-4" />
-              <span>Cielo&apos;s Wishlist</span>
+              {isCielo ? (
+                <TigerPawEmblem className="w-4 h-4" />
+              ) : (
+                <StrawberryEmblem className="w-4 h-4" />
+              )}
+              <span>{partnerDisplayName}&apos;s Wishlist</span>
             </button>
 
+            {/* My Wishes Button */}
             <button
-              onClick={() => setActiveOwner('yani')}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all ${
-                activeOwner === 'yani'
-                  ? 'bg-amber-500 text-white shadow-md'
+              onClick={() => setViewMode('my')}
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
+                viewMode === 'my'
+                  ? 'bg-[var(--accent)] text-white shadow-md'
                   : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
               }`}
             >
-              <TigerPawEmblem className="w-4 h-4" />
-              <span>Yani&apos;s Wishlist</span>
+              {isCielo ? (
+                <StrawberryEmblem className="w-4 h-4" />
+              ) : (
+                <TigerPawEmblem className="w-4 h-4" />
+              )}
+              <span>My Wishes</span>
             </button>
           </div>
 
-          {/* Quick Stats Pills */}
+          {/* Quick Statistics */}
           <div className="flex items-center gap-2 flex-wrap">
             <span className="px-3 py-1.5 rounded-xl bg-[var(--bg-card)] border border-[var(--border-color)] text-xs font-medium text-[var(--text-primary)] flex items-center gap-1.5 shadow-sm">
               <Sparkles className="w-3.5 h-3.5 text-[var(--accent)]" />
@@ -284,6 +296,21 @@ export function WishlistTab({ currentUser }: { currentUser: UserSession }) {
         </div>
       </div>
 
+      {/* "My Wishes" Mode Informational Banner */}
+      {viewMode === 'my' && (
+        <div className="p-3.5 sm:p-4 rounded-2xl bg-[var(--bg-card)] border border-[var(--accent)]/30 text-xs text-[var(--text-primary)] flex items-center gap-3 shadow-sm">
+          <div className="p-2 rounded-xl bg-[var(--accent-soft)] text-[var(--accent)] shrink-0">
+            <Info className="w-4 h-4" />
+          </div>
+          <div>
+            <span className="font-semibold text-[var(--accent)]">Personal Wishlist: </span>
+            <span className="text-[var(--text-muted)]">
+              These are your wishes. {partnerDisplayName} sees this list on their account to plan surprises and gifts for you!
+            </span>
+          </div>
+        </div>
+      )}
+
       {/* Filter, Search & Sorting Controls */}
       <div className="bg-[var(--bg-card)] p-4 sm:p-5 rounded-3xl border border-[var(--border-color)] space-y-4 shadow-sm">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -295,39 +322,37 @@ export function WishlistTab({ currentUser }: { currentUser: UserSession }) {
               placeholder="Search wishlist items..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-[var(--bg-elevated)] border border-[var(--border-color)] text-sm text-[var(--text-primary)] focus:outline-none focus:border-[var(--accent)] transition-all placeholder:text-[var(--text-muted)]/70"
+              className="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-[var(--bg-elevated)] border border-[var(--border-color)] text-sm text-[var(--text-primary)] focus:outline-none focus:border-[var(--accent)] transition-all placeholder:text-[var(--text-muted)]/60"
             />
           </div>
 
           {/* Status and Sort Controls */}
           <div className="flex items-center gap-2">
-            {/* Status Filter */}
             <div className="flex items-center bg-[var(--bg-chip)] p-1 rounded-xl border border-[var(--border-color)] text-xs">
               {(['ALL', 'ACTIVE', 'GRANTED'] as const).map((st) => (
                 <button
                   key={st}
                   onClick={() => setStatusFilter(st)}
-                  className={`px-3 py-1.5 rounded-lg font-medium transition-colors ${
+                  className={`px-3 py-1.5 rounded-lg font-medium transition-colors cursor-pointer ${
                     statusFilter === st
                       ? 'bg-[var(--bg-card)] text-[var(--accent)] shadow-sm'
                       : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
                   }`}
                 >
-                  {st === 'ALL' ? 'All' : st === 'ACTIVE' ? 'Active' : 'Granted'}
+                  {st === 'ALL' ? 'All' : st === 'ACTIVE' ? 'Active' : 'Fulfilled'}
                 </button>
               ))}
             </div>
 
-            {/* Sort Selector */}
             <div className="relative">
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as any)}
-                className="pl-8 pr-3 py-2 rounded-xl bg-[var(--bg-elevated)] border border-[var(--border-color)] text-xs font-medium text-[var(--text-primary)] focus:outline-none focus:border-[var(--accent)] cursor-pointer appearance-none"
+                className="pl-8 pr-3 py-2 rounded-xl bg-[var(--bg-elevated)] border border-[var(--border-color)] text-xs font-semibold text-[var(--text-primary)] focus:outline-none focus:border-[var(--accent)] cursor-pointer appearance-none"
               >
-                <option value="priority">Sort: Priority ⭐</option>
-                <option value="priceAsc">Sort: Price (Low → High)</option>
-                <option value="priceDesc">Sort: Price (High → Low)</option>
+                <option value="priority">Sort: Priority</option>
+                <option value="priceAsc">Sort: Price (Low to High)</option>
+                <option value="priceDesc">Sort: Price (High to Low)</option>
                 <option value="newest">Sort: Newest</option>
               </select>
               <ArrowUpDown className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[var(--text-muted)] pointer-events-none" />
@@ -341,7 +366,7 @@ export function WishlistTab({ currentUser }: { currentUser: UserSession }) {
             <button
               key={cat}
               onClick={() => setSelectedCategory(cat)}
-              className={`px-3.5 py-1.5 rounded-xl font-medium whitespace-nowrap transition-all ${
+              className={`px-3.5 py-1.5 rounded-xl font-semibold whitespace-nowrap transition-all cursor-pointer ${
                 selectedCategory === cat
                   ? 'bg-[var(--accent)] text-white shadow-sm'
                   : 'bg-[var(--bg-chip)] text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-chip-hover)]'
@@ -375,21 +400,25 @@ export function WishlistTab({ currentUser }: { currentUser: UserSession }) {
         /* Empty State */
         <div className="text-center py-16 px-4 bg-[var(--bg-card)] rounded-3xl border border-dashed border-[var(--border-color)]">
           <div className="w-16 h-16 rounded-3xl bg-[var(--accent-soft)] text-[var(--accent)] flex items-center justify-center mx-auto mb-4">
-            {activeOwner === 'cielo' ? (
-              <StrawberryEmblem className="w-8 h-8" />
+            {activeOwnerUsername === 'cielo' ? (
+              <StrawberryEmblem className="w-9 h-9" />
             ) : (
-              <TigerPawEmblem className="w-8 h-8" />
+              <TigerPawEmblem className="w-9 h-9" />
             )}
           </div>
           <h3 className="text-lg font-bold text-[var(--text-primary)] mb-1">
             {searchQuery || selectedCategory !== 'All' || statusFilter !== 'ALL'
               ? 'No matching wishlist items found'
-              : `No wishes added for ${activeOwner === 'cielo' ? 'Cielo' : 'Yani'} yet!`}
+              : viewMode === 'partner'
+              ? `No wishes listed for ${partnerDisplayName} yet!`
+              : 'Your personal wishlist is currently empty!'}
           </h3>
-          <p className="text-xs sm:text-sm text-[var(--text-muted)] max-w-sm mx-auto mb-6">
+          <p className="text-xs sm:text-sm text-[var(--text-muted)] max-w-sm mx-auto mb-6 leading-relaxed">
             {searchQuery || selectedCategory !== 'All' || statusFilter !== 'ALL'
-              ? 'Try adjusting your filters or search keywords.'
-              : 'Add clothing, dream trips, tech gadgets, or sweet date ideas to this wishlist.'}
+              ? 'Try clearing your search or selecting a different category filter.'
+              : viewMode === 'partner'
+              ? `Add a gift idea or surprise for ${partnerDisplayName} so you never forget.`
+              : `Add things you love so ${partnerDisplayName} knows what to surprise you with.`}
           </p>
           <button
             onClick={() => {
@@ -398,7 +427,8 @@ export function WishlistTab({ currentUser }: { currentUser: UserSession }) {
             }}
             className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-[var(--accent)] text-white font-semibold text-xs sm:text-sm shadow-md hover:bg-[var(--accent-hover)] transition-all cursor-pointer"
           >
-            <Plus className="w-4 h-4" /> Add First Wish
+            <Plus className="w-4 h-4" />
+            <span>{viewMode === 'my' ? 'Add Your First Wish' : `Add a Wish for ${partnerDisplayName}`}</span>
           </button>
         </div>
       )}
@@ -413,10 +443,10 @@ export function WishlistTab({ currentUser }: { currentUser: UserSession }) {
         onSave={handleSaveWish}
         editingWish={editingWish}
         currentUser={currentUser}
-        defaultOwnerId={targetOwnerId}
+        defaultOwnerId={defaultTargetOwnerId}
       />
 
-      {/* Granted Celebration Overlay */}
+      {/* Celebration Modal */}
       <WishlistCelebration
         item={celebratingWish}
         onClose={() => setCelebratingWish(null)}

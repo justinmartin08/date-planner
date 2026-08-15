@@ -77,13 +77,10 @@ export function Navigation({
                 <span className="absolute -top-0.5 -right-0.5 w-3 h-3 rounded-full bg-[var(--berry)] border-2 border-[var(--bg-main)] animate-breathe" />
               )}
             </div>
-            <div className="min-w-0">
-              <h1 className="font-semibold text-xs sm:text-sm leading-tight tracking-tight text-[var(--text-primary)] group-hover:text-[var(--accent)] transition-colors truncate">
+            <div className="min-w-0 flex items-center">
+              <h1 className="font-bold text-sm sm:text-base leading-none tracking-tight text-[var(--text-primary)] group-hover:text-[var(--accent)] transition-colors truncate">
                 {user.displayName}
               </h1>
-              <div className="text-[10px] text-[var(--text-muted)] flex items-center gap-1">
-                <CoupleMark className="w-3 h-3" /> Cielo &amp; Yani
-              </div>
             </div>
           </button>
 

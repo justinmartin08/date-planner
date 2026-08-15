@@ -204,7 +204,7 @@ export function DateModal({ isOpen, onClose, onSave, initialData }: DateModalPro
                 boxShadow: '0 8px 20px -6px var(--accent-glow)',
               }}
             >
-              {loading ? 'Saving…' : initialData ? 'Save Changes' : 'Plan Date ✨'}
+              {loading ? 'Saving…' : initialData ? 'Save Changes' : 'Plan Date'}
             </button>
           </div>
         </form>

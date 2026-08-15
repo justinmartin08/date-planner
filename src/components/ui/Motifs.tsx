@@ -3,16 +3,16 @@
 import React from 'react';
 import type { UserTheme } from '@/lib/types';
 
-type ClassName = { className?: string };
+type ClassName = { className?: string; style?: React.CSSProperties };
 
 /* ===========================================================================
    CIELO — Pokémon ✧ strawberry icons  (light & airy)
    =========================================================================== */
 
 /** Classic red & white Pokéball with a soft sun-sheen */
-export function PokeballEmblem({ className = 'w-6 h-6' }: ClassName) {
+export function PokeballEmblem({ className = 'w-6 h-6', style }: ClassName) {
   return (
-    <svg viewBox="0 0 40 40" fill="none" className={className} xmlns="http://www.w3.org/2000/svg">
+    <svg viewBox="0 0 40 40" fill="none" className={className} style={style} xmlns="http://www.w3.org/2000/svg">
       <defs>
         <linearGradient id="pb-top" x1="20" y1="2" x2="20" y2="20" gradientUnits="userSpaceOnUse">
           <stop stopColor="#FF5A76" />
@@ -35,31 +35,105 @@ export function PokeballEmblem({ className = 'w-6 h-6' }: ClassName) {
   );
 }
 
-/** Club strawberry with a champagne shine and seed pips */
-export function StrawberryEmblem({ className = 'w-6 h-6' }: ClassName) {
+/** Custom cartoon Pokémon-styled Strawberry Berry with electric sky-blue leaf crown and anime gloss */
+export function StrawberryEmblem({ className = 'w-6 h-6', style }: ClassName) {
   return (
-    <svg viewBox="0 0 40 40" fill="none" className={className} xmlns="http://www.w3.org/2000/svg">
+    <svg viewBox="0 0 48 48" fill="none" className={className} style={style} xmlns="http://www.w3.org/2000/svg">
       <defs>
-        <linearGradient id="berry-body" x1="12" y1="4" x2="26" y2="36" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#FF8498" />
-          <stop offset="0.55" stopColor="#FB3D6D" />
-          <stop offset="1" stopColor="#D5224F" />
+        {/* Berry body gradient */}
+        <linearGradient id="poke-berry-body" x1="12" y1="12" x2="36" y2="44" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#FF5C8A" />
+          <stop offset="0.45" stopColor="#F4225A" />
+          <stop offset="1" stopColor="#B80C38" />
+        </linearGradient>
+
+        {/* Electric sky-blue leaf crown */}
+        <linearGradient id="poke-leaf-blue" x1="14" y1="2" x2="34" y2="18" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#7DD3FC" />
+          <stop offset="0.5" stopColor="#0284C7" />
+          <stop offset="1" stopColor="#0369A1" />
+        </linearGradient>
+
+        {/* Center leaf highlight */}
+        <linearGradient id="poke-leaf-center" x1="24" y1="1" x2="24" y2="16" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#BAE6FD" />
+          <stop offset="1" stopColor="#0EA5E9" />
+        </linearGradient>
+
+        {/* Specular gloss */}
+        <linearGradient id="poke-berry-gloss" x1="14" y1="14" x2="22" y2="28" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#FFFFFF" stopOpacity="0.85" />
+          <stop offset="1" stopColor="#FFFFFF" stopOpacity="0.05" />
         </linearGradient>
       </defs>
-      <path d="M20 36c7.2-6.6 13-14.2 13-22.2 0-5.6-4.6-7.8-9.2-5.6-1.4.7-2.5 1.7-3.4 2.7-.9-1-2-2-3.4-2.7-4.6-2.2-9.2 0-9.2 5.6 0 8 5.8 15.6 13.2 22.2Z" fill="url(#berry-body)" />
-      <path d="M8.4 20.4c2.4-1.5 4.8-2.1 7-1.8" stroke="#FFFFFF" strokeWidth="1.2" strokeLinecap="round" opacity="0.35" />
-      <path d="M17.6 8.2C18.9 4.4 16.6 2.2 14.4 3.2c2.4 1.7 2.4 3.4 3.2 5Z" fill="#3CBF6A" />
-      <path d="M22.4 8.2c-1.3-3.8 1-6 3.2-5-2.4 1.7-2.4 3.4-3.2 5Z" fill="#3CBF6A" />
-      <path d="M17 3.4c2-.9 3.6.2 3 .4-1 1.3-2 2.2-3 3.4Z" fill="#2EA558" />
-      <path d="M23 3.4c-2-.9-3.6.2-3 .4 1 1.3 2 2.2 3 3.4Z" fill="#2EA558" />
-      <circle cx="14.6" cy="14.4" r="1" fill="#FFE08A" />
-      <circle cx="19.5" cy="18.4" r="1" fill="#FFE08A" />
-      <circle cx="25" cy="14.6" r="1" fill="#FFE08A" />
-      <circle cx="12" cy="21.5" r="1" fill="#FFC6D2" />
-      <circle cx="27.5" cy="21" r="1" fill="#FFC6D2" />
-      <circle cx="16" cy="27.5" r="1" fill="#FFB0C0" />
-      <circle cx="23.5" cy="27.5" r="1" fill="#FFB0C0" />
-      <circle cx="19.8" cy="23.6" r="1" fill="#FFD0DC" />
+
+      {/* Outer shadow / cartoon contour */}
+      <path
+        d="M24 45.5C14.5 39 8 30.5 8 20.5 8 13.8 13.2 11 18.8 13.5c2 .9 3.8 2.3 5.2 3.8 1.4-1.5 3.2-2.9 5.2-3.8C34.8 11 40 13.8 40 20.5c0 10-6.5 18.5-16 25Z"
+        fill="#7A0422"
+        opacity="0.3"
+      />
+
+      {/* Main Berry Heart Body */}
+      <path
+        d="M24 44C15.2 37.8 9 29.8 9 20.2 9 13.8 14 11.2 19.2 13.5c1.8.8 3.4 2.1 4.8 3.5 1.4-1.4 3-2.7 4.8-3.5C34 11.2 39 13.8 39 20.2c0 9.6-6.2 17.6-15 23.8Z"
+        fill="url(#poke-berry-body)"
+      />
+
+      {/* Anime Gloss Reflection Curve (Left side) */}
+      <path
+        d="M13.5 18c0-3.5 3-5.5 6-4.5 1.2.4 2.2 1.3 3.2 2.4-2.8.2-5.5 1.8-7 4.5-.8 1.5-1.2 3.2-1.2 5 0-2.8-.4-5.4-1-7.4Z"
+        fill="url(#poke-berry-gloss)"
+      />
+      <ellipse cx="14.5" cy="27" rx="1.8" ry="3.5" transform="rotate(-15 14.5 27)" fill="#FFFFFF" opacity="0.6" />
+
+      {/* Cute Anime Blush Dots */}
+      <ellipse cx="15" cy="23" rx="3.2" ry="1.8" fill="#FFAEC2" opacity="0.75" />
+      <ellipse cx="33" cy="23" rx="3.2" ry="1.8" fill="#FFAEC2" opacity="0.75" />
+
+      {/* Golden Star / Seed Pips */}
+      {/* Top row */}
+      <circle cx="20" cy="21" r="1.3" fill="#FEF08A" />
+      <circle cx="28" cy="21" r="1.3" fill="#FEF08A" />
+      {/* Middle row */}
+      <circle cx="16.5" cy="29" r="1.2" fill="#FDE047" />
+      <circle cx="24" cy="28" r="1.4" fill="#FEF08A" />
+      <circle cx="31.5" cy="29" r="1.2" fill="#FDE047" />
+      {/* Bottom tip */}
+      <circle cx="20.5" cy="35.5" r="1.1" fill="#FACC15" />
+      <circle cx="27.5" cy="35.5" r="1.1" fill="#FACC15" />
+      <circle cx="24" cy="39" r="0.9" fill="#FACC15" />
+
+      {/* Electric Sky-Blue Leaf Crown (Left, Center, Right, and Spark Tips) */}
+      {/* Left Leaf */}
+      <path
+        d="M21 14.5C15 14 8 10 9 4c4 1 9.5 5 12 10.5Z"
+        fill="url(#poke-leaf-blue)"
+      />
+      {/* Right Leaf */}
+      <path
+        d="M27 14.5C33 14 40 10 39 4c-4 1-9.5 5-12 10.5Z"
+        fill="url(#poke-leaf-blue)"
+      />
+      {/* Center Crown Leaf (Tuft) */}
+      <path
+        d="M24 16c-3-4.5-3.5-10 0-14 3.5 4 3 9.5 0 14Z"
+        fill="url(#poke-leaf-center)"
+      />
+      {/* Left Small Leaflet */}
+      <path
+        d="M17 14.5c-4-1-6.5-3.5-6-6 2.5.5 5 2.5 6 6Z"
+        fill="#38BDF8"
+      />
+      {/* Right Small Leaflet */}
+      <path
+        d="M31 14.5c4-1 6.5-3.5 6-6-2.5.5-5 2.5-6 6Z"
+        fill="#38BDF8"
+      />
+
+      {/* Stem Cap Spark */}
+      <circle cx="24" cy="14" r="2" fill="#BAE6FD" />
+      <path d="M24 2.5l.8 2.2 2.4.4-1.8 1.6.5 2.4-1.9-1.2-1.9 1.2.5-2.4-1.8-1.6 2.4-.4.8-2.2Z" fill="#FDE047" opacity="0.85" />
     </svg>
   );
 }
@@ -130,9 +204,9 @@ export function TigerFaceEmblem({ className = 'w-6 h-6' }: ClassName) {
 }
 
 /** Anatomical 4-toe tiger paw */
-export function TigerPawEmblem({ className = 'w-6 h-6' }: ClassName) {
+export function TigerPawEmblem({ className = 'w-6 h-6', style }: ClassName) {
   return (
-    <svg viewBox="0 0 40 40" fill="none" className={className} xmlns="http://www.w3.org/2000/svg">
+    <svg viewBox="0 0 40 40" fill="none" className={className} style={style} xmlns="http://www.w3.org/2000/svg">
       <ellipse cx="8" cy="14" rx="2.8" ry="4" transform="rotate(-25 8 14)" fill="currentColor" />
       <ellipse cx="15.5" cy="9" rx="3" ry="4.5" transform="rotate(-8 15.5 9)" fill="currentColor" />
       <ellipse cx="24.5" cy="9" rx="3" ry="4.5" transform="rotate(8 24.5 9)" fill="currentColor" />

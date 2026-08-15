@@ -11,10 +11,10 @@ import {
   MoreVertical,
   Edit2,
   Trash2,
-  Tag,
   Sparkles,
   ShoppingBag,
   Heart,
+  Check,
 } from 'lucide-react';
 import { StrawberryEmblem, TigerPawEmblem } from '@/components/ui/Motifs';
 
@@ -41,7 +41,6 @@ export function WishlistCard({
   const isOwner = item.ownerId === currentUser.id;
   const isOwnerCielo = item.owner.username === 'cielo';
   const isClaimedByMe = item.claimedById === currentUser.id;
-  const isClaimedByPartner = Boolean(item.claimedById && !isClaimedByMe);
   const isGranted = item.status === 'GRANTED';
 
   const currencySymbol =
@@ -61,7 +60,7 @@ export function WishlistCard({
       const parsed = new URL(item.url.startsWith('http') ? item.url : `https://${item.url}`);
       domain = parsed.hostname.replace(/^www\./, '');
     } catch {
-      domain = 'Visit link';
+      domain = 'Visit Link';
     }
   }
 
@@ -69,9 +68,9 @@ export function WishlistCard({
     <div
       className={`group relative flex flex-col rounded-3xl border transition-all duration-300 overflow-hidden bg-[var(--bg-card)] ${
         isGranted
-          ? 'opacity-85 border-emerald-500/30'
+          ? 'opacity-80 border-emerald-500/30'
           : !isOwner && isClaimedByMe
-          ? 'border-[var(--berry)] ring-1 ring-[var(--berry-soft)] shadow-md'
+          ? 'border-[var(--berry)] ring-2 ring-[var(--berry-soft)] shadow-md'
           : 'border-[var(--border-color)] hover:border-[var(--accent)] hover:shadow-lg'
       }`}
       style={{ boxShadow: isGranted ? 'none' : 'var(--shadow-soft)' }}
@@ -93,14 +92,14 @@ export function WishlistCard({
             ) : (
               <TigerPawEmblem className="w-12 h-12 text-[var(--accent)]/60" />
             )}
-            <span className="text-xs font-medium uppercase tracking-wider opacity-60">
+            <span className="text-xs font-semibold uppercase tracking-wider opacity-70">
               {item.category}
             </span>
           </div>
         )}
 
         {/* Priority Stars floating on top left */}
-        <div className="absolute top-3 left-3 flex items-center gap-0.5 px-2.5 py-1 rounded-full bg-black/55 backdrop-blur-md text-amber-300 text-xs font-semibold shadow-sm">
+        <div className="absolute top-3 left-3 flex items-center gap-0.5 px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md text-amber-300 text-xs font-semibold shadow-sm">
           {Array.from({ length: 3 }).map((_, i) => (
             <Star
               key={i}
@@ -113,7 +112,7 @@ export function WishlistCard({
 
         {/* Category Pill floating on top right */}
         <div className="absolute top-3 right-3 flex items-center gap-1.5">
-          <span className="px-2.5 py-1 rounded-full bg-[var(--bg-card)]/90 backdrop-blur-md border border-[var(--border-color)] text-[var(--text-primary)] text-[11px] font-medium shadow-sm">
+          <span className="px-2.5 py-1 rounded-full bg-[var(--bg-card)]/90 backdrop-blur-md border border-[var(--border-color)] text-[var(--text-primary)] text-[11px] font-semibold shadow-sm">
             {item.category}
           </span>
         </div>
@@ -122,8 +121,15 @@ export function WishlistCard({
         {isGranted && (
           <div className="absolute inset-0 bg-emerald-950/40 backdrop-blur-[2px] flex items-center justify-center">
             <span className="px-4 py-1.5 rounded-full bg-emerald-500 text-white font-bold text-xs uppercase tracking-wider flex items-center gap-1.5 shadow-lg">
-              <CheckCircle2 className="w-4 h-4" /> Granted &amp; Fulfilled
+              <CheckCircle2 className="w-4 h-4" /> Fulfilled
             </span>
+          </div>
+        )}
+
+        {/* Secret claim banner on photo for viewer */}
+        {!isOwner && isClaimedByMe && !isGranted && (
+          <div className="absolute bottom-2 left-2 right-2 px-3 py-1 rounded-xl bg-[var(--berry)] text-white text-[11px] font-bold flex items-center justify-center gap-1.5 shadow-md">
+            <Lock className="w-3 h-3" /> Reserved by You (Surprise)
           </div>
         )}
       </div>
@@ -133,7 +139,7 @@ export function WishlistCard({
         <div className="space-y-2">
           {/* Price & Title header */}
           <div className="flex items-start justify-between gap-2">
-            <h3 className="font-semibold text-base sm:text-lg text-[var(--text-primary)] line-clamp-2 leading-snug group-hover:text-[var(--accent)] transition-colors">
+            <h3 className="font-bold text-base sm:text-lg text-[var(--text-primary)] line-clamp-2 leading-snug group-hover:text-[var(--accent)] transition-colors">
               {item.title}
             </h3>
 
@@ -141,7 +147,7 @@ export function WishlistCard({
             <div className="relative shrink-0">
               <button
                 onClick={() => setShowMenu(!showMenu)}
-                className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-chip)] transition-colors"
+                className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-chip)] transition-colors cursor-pointer"
                 title="Options"
               >
                 <MoreVertical className="w-4 h-4" />
@@ -159,7 +165,7 @@ export function WishlistCard({
                         setShowMenu(false);
                         onEdit(item);
                       }}
-                      className="w-full px-3.5 py-2 text-left text-xs font-medium text-[var(--text-primary)] hover:bg-[var(--bg-chip)] flex items-center gap-2"
+                      className="w-full px-3.5 py-2 text-left text-xs font-medium text-[var(--text-primary)] hover:bg-[var(--bg-chip)] flex items-center gap-2 cursor-pointer"
                     >
                       <Edit2 className="w-3.5 h-3.5 text-[var(--accent)]" /> Edit Item
                     </button>
@@ -168,7 +174,7 @@ export function WishlistCard({
                         setShowMenu(false);
                         onDelete(item.id);
                       }}
-                      className="w-full px-3.5 py-2 text-left text-xs font-medium text-rose-500 hover:bg-rose-500/10 flex items-center gap-2"
+                      className="w-full px-3.5 py-2 text-left text-xs font-medium text-rose-500 hover:bg-rose-500/10 flex items-center gap-2 cursor-pointer"
                     >
                       <Trash2 className="w-3.5 h-3.5" /> Delete
                     </button>
@@ -201,7 +207,7 @@ export function WishlistCard({
                 href={item.url.startsWith('http') ? item.url : `https://${item.url}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 text-xs text-[var(--accent)] hover:underline font-medium break-all"
+                className="inline-flex items-center gap-1.5 text-xs text-[var(--accent)] hover:underline font-semibold break-all"
               >
                 <ShoppingBag className="w-3.5 h-3.5 shrink-0" />
                 <span className="truncate max-w-[220px]">{domain}</span>
@@ -211,35 +217,35 @@ export function WishlistCard({
           )}
         </div>
 
-        {/* Action Controls & Secret Claim / Grant */}
+        {/* Action Controls */}
         <div className="pt-3 border-t border-[var(--border-color)] flex flex-col gap-2">
-          {/* Secret Claim Indicator for Partner */}
+          {/* Partner Actions */}
           {!isOwner && (
             <div className="flex items-center justify-between gap-2">
               <button
                 onClick={() => onToggleClaim(item.id)}
-                className={`flex-1 py-2 px-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-all ${
+                className={`flex-1 py-2 px-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
                   isClaimedByMe
                     ? 'bg-[var(--berry)] text-white shadow-sm hover:opacity-90'
                     : 'bg-[var(--bg-chip)] hover:bg-[var(--bg-chip-hover)] text-[var(--text-primary)] border border-[var(--border-color)]'
                 }`}
-                title={isClaimedByMe ? 'Click to unclaim' : 'Secretly reserve this gift'}
+                title={isClaimedByMe ? 'Click to cancel secret reservation' : 'Secretly reserve this gift'}
               >
                 <Lock className="w-3.5 h-3.5" />
-                {isClaimedByMe ? "I'm buying this! 🤫" : 'Secretly Claim'}
+                {isClaimedByMe ? 'Reserved by You' : 'Secretly Claim'}
               </button>
 
               <button
                 onClick={() => onToggleGrant(item)}
-                className={`py-2 px-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-all ${
+                className={`py-2 px-3.5 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
                   isGranted
                     ? 'bg-emerald-500 text-white'
                     : 'bg-[var(--badge-bg)] text-[var(--badge-text)] hover:bg-[var(--accent)] hover:text-white'
                 }`}
-                title="Mark as Granted / Gifted"
+                title="Mark as Fulfilled"
               >
                 <Gift className="w-3.5 h-3.5" />
-                {isGranted ? 'Fulfilled' : 'Grant 🎉'}
+                {isGranted ? 'Fulfilled' : 'Grant Gift'}
               </button>
             </div>
           )}
@@ -249,14 +255,14 @@ export function WishlistCard({
             <div className="flex items-center justify-between gap-2">
               <button
                 onClick={() => onToggleGrant(item)}
-                className={`w-full py-2 px-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-all ${
+                className={`w-full py-2 px-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
                   isGranted
                     ? 'bg-emerald-500/15 text-emerald-600 border border-emerald-500/30'
                     : 'bg-[var(--accent-soft)] text-[var(--accent)] hover:bg-[var(--accent)] hover:text-white'
                 }`}
               >
                 <CheckCircle2 className="w-3.5 h-3.5" />
-                {isGranted ? 'Fulfilled (Click to uncheck)' : 'Mark as Received 🎉'}
+                {isGranted ? 'Fulfilled (Click to uncheck)' : 'Mark as Received'}
               </button>
             </div>
           )}

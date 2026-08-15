@@ -63,6 +63,9 @@ export function WishlistModal({
   currentUser,
   defaultOwnerId,
 }: WishlistModalProps) {
+  const isCielo = currentUser.username === 'cielo';
+  const partnerName = isCielo ? 'Yani' : 'Cielo';
+
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [url, setUrl] = useState('');
@@ -72,7 +75,11 @@ export function WishlistModal({
   const [priority, setPriority] = useState(2);
   const [imageUrl, setImageUrl] = useState('');
   const [imageMode, setImageMode] = useState<'upload' | 'url'>('upload');
-  const [ownerId, setOwnerId] = useState(defaultOwnerId || currentUser.id);
+  const [targetOwner, setTargetOwner] = useState<'cielo' | 'yani'>(
+    defaultOwnerId === 'cielo' || (isCielo && defaultOwnerId === currentUser.id)
+      ? 'cielo'
+      : 'yani'
+  );
 
   const [isUploading, setIsUploading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -80,7 +87,6 @@ export function WishlistModal({
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Sync state when modal opens or editingWish changes
   useEffect(() => {
     if (editingWish) {
       setTitle(editingWish.title || '');
@@ -91,7 +97,7 @@ export function WishlistModal({
       setCategory(editingWish.category || 'Gifts');
       setPriority(editingWish.priority || 2);
       setImageUrl(editingWish.imageUrl || '');
-      setOwnerId(editingWish.ownerId || currentUser.id);
+      setTargetOwner(editingWish.owner.username === 'cielo' ? 'cielo' : 'yani');
       setImageMode(editingWish.imageUrl?.startsWith('/api/uploads') ? 'upload' : 'url');
     } else {
       setTitle('');
@@ -102,11 +108,19 @@ export function WishlistModal({
       setCategory('Gifts');
       setPriority(2);
       setImageUrl('');
-      setOwnerId(defaultOwnerId || currentUser.id);
+      setTargetOwner(
+        defaultOwnerId === 'cielo' || (isCielo && defaultOwnerId === currentUser.id)
+          ? 'cielo'
+          : defaultOwnerId === 'yani' || (!isCielo && defaultOwnerId === currentUser.id)
+          ? 'yani'
+          : isCielo
+          ? 'yani'
+          : 'cielo'
+      );
       setImageMode('upload');
     }
     setError(null);
-  }, [editingWish, isOpen, currentUser.id, defaultOwnerId]);
+  }, [editingWish, isOpen, currentUser.id, defaultOwnerId, isCielo]);
 
   if (!isOpen) return null;
 
@@ -157,6 +171,14 @@ export function WishlistModal({
     setError(null);
 
     try {
+      // Find appropriate owner ID
+      const resolvedOwnerId =
+        targetOwner === currentUser.username
+          ? currentUser.id
+          : defaultOwnerId && defaultOwnerId !== currentUser.id
+          ? defaultOwnerId
+          : targetOwner;
+
       await onSave({
         title: title.trim(),
         description: description.trim() || undefined,
@@ -166,7 +188,7 @@ export function WishlistModal({
         category,
         priority,
         imageUrl: imageUrl.trim() || undefined,
-        ownerId,
+        ownerId: resolvedOwnerId,
       });
       onClose();
     } catch (err: any) {
@@ -181,7 +203,7 @@ export function WishlistModal({
       {/* Mobile Backdrop tap to close */}
       <div className="fixed inset-0 -z-10" onClick={onClose} />
 
-      {/* Modal Container: Bottom sheet on mobile, centered card on desktop */}
+      {/* Modal Container */}
       <div className="w-full sm:max-w-lg bg-[var(--bg-card)] border-t sm:border border-[var(--border-color)] rounded-t-[32px] sm:rounded-3xl max-h-[92vh] flex flex-col shadow-2xl mobile-sheet-anim overflow-hidden">
         {/* Mobile Swipe Handle */}
         <div className="sm:hidden pt-3 pb-1 flex justify-center">
@@ -199,14 +221,14 @@ export function WishlistModal({
                 {editingWish ? 'Edit Wish Item' : 'Add to Wishlist'}
               </h2>
               <p className="text-xs text-[var(--text-muted)]">
-                {editingWish ? 'Update details or price' : 'Add something you or your partner love'}
+                {editingWish ? 'Update wish details or price' : 'Add a desired item or gift idea'}
               </p>
             </div>
           </div>
 
           <button
             onClick={onClose}
-            className="p-2 rounded-full text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-chip)] transition-colors"
+            className="p-2 rounded-full text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-chip)] transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -215,7 +237,7 @@ export function WishlistModal({
         {/* Scrollable Form Content */}
         <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6 space-y-5">
           {error && (
-            <div className="p-3.5 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-600 text-xs flex items-center gap-2">
+            <div className="p-3.5 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-500 text-xs font-semibold flex items-center gap-2">
               <AlertCircle className="w-4 h-4 shrink-0" />
               <span>{error}</span>
             </div>
@@ -229,30 +251,28 @@ export function WishlistModal({
             <div className="grid grid-cols-2 gap-3">
               <button
                 type="button"
-                onClick={() => setOwnerId(currentUser.username === 'cielo' ? currentUser.id : 'cielo-temp-id')}
-                className={`py-2.5 px-3.5 rounded-2xl border text-xs font-medium flex items-center justify-center gap-2 transition-all ${
-                  ownerId === (currentUser.username === 'cielo' ? currentUser.id : 'other') ||
-                  (currentUser.username === 'cielo' && ownerId === currentUser.id)
-                    ? 'border-blue-500 bg-blue-500/10 text-blue-600 font-semibold shadow-sm'
+                onClick={() => setTargetOwner('cielo')}
+                className={`py-2.5 px-3.5 rounded-2xl border text-xs font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer ${
+                  targetOwner === 'cielo'
+                    ? 'border-blue-500 bg-blue-500/15 text-blue-600 shadow-sm'
                     : 'border-[var(--border-color)] bg-[var(--bg-chip)] text-[var(--text-muted)] hover:text-[var(--text-primary)]'
                 }`}
               >
                 <StrawberryEmblem className="w-4 h-4" />
-                Cielo&apos;s Wishlist
+                <span>Cielo&apos;s Wishlist</span>
               </button>
 
               <button
                 type="button"
-                onClick={() => setOwnerId(currentUser.username === 'yani' ? currentUser.id : 'yani-temp-id')}
-                className={`py-2.5 px-3.5 rounded-2xl border text-xs font-medium flex items-center justify-center gap-2 transition-all ${
-                  ownerId === (currentUser.username === 'yani' ? currentUser.id : 'other') ||
-                  (currentUser.username === 'yani' && ownerId === currentUser.id)
-                    ? 'border-amber-500 bg-amber-500/10 text-amber-600 font-semibold shadow-sm'
+                onClick={() => setTargetOwner('yani')}
+                className={`py-2.5 px-3.5 rounded-2xl border text-xs font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer ${
+                  targetOwner === 'yani'
+                    ? 'border-amber-500 bg-amber-500/15 text-amber-600 shadow-sm'
                     : 'border-[var(--border-color)] bg-[var(--bg-chip)] text-[var(--text-muted)] hover:text-[var(--text-primary)]'
                 }`}
               >
                 <TigerPawEmblem className="w-4 h-4" />
-                Yani&apos;s Wishlist
+                <span>Yani&apos;s Wishlist</span>
               </button>
             </div>
           </div>
@@ -265,10 +285,10 @@ export function WishlistModal({
             <input
               type="text"
               required
-              placeholder="e.g. Sony WH-1000XM5 Headphones, Strawberry Matcha, Japan Trip"
+              placeholder="e.g. Wireless Headphones, Matchbox car, Japan trip"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="w-full px-4 py-2.5 rounded-2xl bg-[var(--bg-elevated)] border border-[var(--border-color)] text-sm text-[var(--text-primary)] focus:outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent-soft)] transition-all"
+              className="w-full px-4 py-2.5 rounded-2xl bg-[var(--bg-elevated)] border border-[var(--border-color)] text-sm text-[var(--text-primary)] focus:outline-none focus:border-[var(--accent)] transition-all"
             />
           </div>
 
@@ -328,7 +348,7 @@ export function WishlistModal({
               </select>
             </div>
 
-            {/* Priority Rating */}
+            {/* Priority Rating with vector stars */}
             <div className="space-y-1.5">
               <label className="block text-xs font-semibold text-[var(--text-primary)]">
                 Priority
@@ -339,7 +359,7 @@ export function WishlistModal({
                     key={star}
                     type="button"
                     onClick={() => setPriority(star)}
-                    className={`flex items-center gap-1 px-3 py-1 rounded-xl text-xs font-medium transition-all ${
+                    className={`flex items-center gap-1 px-3 py-1 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
                       priority === star
                         ? 'bg-amber-400/20 text-amber-600 border border-amber-400/30 shadow-sm'
                         : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
@@ -386,7 +406,7 @@ export function WishlistModal({
                 <button
                   type="button"
                   onClick={() => setImageMode('upload')}
-                  className={`px-2.5 py-1 rounded-lg font-medium transition-colors ${
+                  className={`px-2.5 py-1 rounded-lg font-semibold transition-colors cursor-pointer ${
                     imageMode === 'upload'
                       ? 'bg-[var(--bg-card)] text-[var(--accent)] shadow-sm'
                       : 'text-[var(--text-muted)]'
@@ -397,7 +417,7 @@ export function WishlistModal({
                 <button
                   type="button"
                   onClick={() => setImageMode('url')}
-                  className={`px-2.5 py-1 rounded-lg font-medium transition-colors ${
+                  className={`px-2.5 py-1 rounded-lg font-semibold transition-colors cursor-pointer ${
                     imageMode === 'url'
                       ? 'bg-[var(--bg-card)] text-[var(--accent)] shadow-sm'
                       : 'text-[var(--text-muted)]'
@@ -424,7 +444,7 @@ export function WishlistModal({
                   className="w-full py-4 px-4 rounded-2xl border-2 border-dashed border-[var(--border-color)] hover:border-[var(--accent)] bg-[var(--bg-chip)] hover:bg-[var(--bg-chip-hover)] flex flex-col items-center justify-center gap-1.5 transition-all text-[var(--text-muted)] hover:text-[var(--text-primary)] cursor-pointer"
                 >
                   <Upload className="w-5 h-5 text-[var(--accent)]" />
-                  <span className="text-xs font-medium">
+                  <span className="text-xs font-semibold">
                     {isUploading ? 'Uploading image...' : imageUrl ? 'Replace photo' : 'Take photo or choose from gallery'}
                   </span>
                 </button>
@@ -452,7 +472,7 @@ export function WishlistModal({
                 <button
                   type="button"
                   onClick={() => setImageUrl('')}
-                  className="absolute inset-0 bg-black/50 text-white opacity-0 group-hover:opacity-100 flex items-center justify-center text-xs transition-opacity"
+                  className="absolute inset-0 bg-black/50 text-white opacity-0 group-hover:opacity-100 flex items-center justify-center text-xs transition-opacity cursor-pointer"
                 >
                   Remove
                 </button>
@@ -467,7 +487,7 @@ export function WishlistModal({
             </label>
             <textarea
               rows={2}
-              placeholder="e.g. Size M, Color Pale Pink, or special date ideas..."
+              placeholder="e.g. Size M, Color Pale Pink, or special details..."
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               className="w-full px-4 py-2.5 rounded-2xl bg-[var(--bg-elevated)] border border-[var(--border-color)] text-sm text-[var(--text-primary)] focus:outline-none focus:border-[var(--accent)] transition-all resize-none"
@@ -479,7 +499,7 @@ export function WishlistModal({
             <button
               type="button"
               onClick={onClose}
-              className="px-5 py-2.5 rounded-2xl text-xs font-semibold text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-chip)] transition-colors"
+              className="px-5 py-2.5 rounded-2xl text-xs font-semibold text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-chip)] transition-colors cursor-pointer"
             >
               Cancel
             </button>
