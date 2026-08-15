@@ -1,8 +1,7 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { User, Lock, Eye, EyeOff, LogIn, UserPlus, AlertCircle } from 'lucide-react';
-import { StrawberryEmblem, TigerPawEmblem } from '@/components/ui/Motifs';
 
 export default function LoginPage() {
   const [mode, setMode] = useState<'login' | 'register'>('login');
@@ -153,15 +152,8 @@ export default function LoginPage() {
             }}
           />
 
-          {/* Dual Motif Crest & Header */}
+          {/* Header */}
           <div className="text-center mb-6">
-            {/* Crest Emblem */}
-            <div className="inline-flex items-center gap-2 p-2 px-3.5 rounded-2xl bg-white/5 border border-white/10 mb-3 shadow-inner">
-              <StrawberryEmblem className="w-6 h-6" />
-              <div className="w-1 h-1 rounded-full bg-white/30" />
-              <TigerPawEmblem className="w-5 h-5 text-amber-400" />
-            </div>
-
             <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white mb-1">
               {mode === 'login' ? 'Welcome Back' : 'Create Account'}
             </h1>
