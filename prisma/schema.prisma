@@ -19,6 +19,38 @@ model User {
   createdProposals DateProposal[] @relation("CreatedProposals")
   sentMessages     Message[]      @relation("SentMessages")
   receivedMessages Message[]      @relation("ReceivedMessages")
+  wishes           WishlistItem[] @relation("UserWishes")
+  createdWishes    WishlistItem[] @relation("CreatedWishes")
+  claimedWishes    WishlistItem[] @relation("ClaimedWishes")
+}
+
+model WishlistItem {
+  id          String    @id @default(cuid())
+  title       String
+  description String?
+  url         String?
+  price       Float?
+  currency    String    @default("PHP")
+  category    String    @default("General")
+  priority    Int       @default(1)
+  imageUrl    String?
+  status      String    @default("ACTIVE") // ACTIVE, CLAIMED, GRANTED
+  
+  ownerId     String
+  owner       User      @relation("UserWishes", fields: [ownerId], references: [id], onDelete: Cascade)
+  
+  creatorId   String
+  creator     User      @relation("CreatedWishes", fields: [creatorId], references: [id], onDelete: Cascade)
+  
+  claimedById String?
+  claimedBy   User?     @relation("ClaimedWishes", fields: [claimedById], references: [id], onDelete: SetNull)
+  claimedAt   DateTime?
+  
+  grantedAt   DateTime?
+  grantedNotes String?
+  
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }
 
 model DateProposal {

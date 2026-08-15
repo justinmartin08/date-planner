@@ -6,16 +6,18 @@ import { useRouter } from 'next/navigation';
 import { UserSession } from '@/lib/types';
 import { ThemeProvider } from '@/components/layout/ThemeProvider';
 import { Navigation } from '@/components/layout/Navigation';
+import { MobileBottomNav, MainTabKey } from '@/components/layout/MobileBottomNav';
 import { DateList } from '@/components/dates/DateList';
 import { DateCalendar } from '@/components/dates/DateCalendar';
 import { LetterThread } from '@/components/messages/MessageThread';
+import { WishlistTab } from '@/components/wishlist/WishlistTab';
 import { ThemePatternBg } from '@/components/ui/Motifs';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export default function DashboardPage() {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState<'dates' | 'letters' | 'calendar'>('dates');
+  const [activeTab, setActiveTab] = useState<MainTabKey>('dates');
 
   const { data: userData, error: userError, isLoading, mutate: mutateUser } = useSWR<{ user: UserSession | null }>(
     '/api/auth/me',
@@ -52,7 +54,7 @@ export default function DashboardPage() {
 
   return (
     <ThemeProvider initialUser={user}>
-      <div className="min-h-screen relative flex flex-col">
+      <div className="min-h-screen relative flex flex-col selection:bg-[var(--accent)] selection:text-white">
         <ThemePatternBg theme={user.theme} />
 
         <Navigation
@@ -62,15 +64,25 @@ export default function DashboardPage() {
           onUserUpdate={() => mutateUser()}
         />
 
-        <main className="flex-1 max-w-6xl w-full mx-auto p-4 sm:p-8 relative z-10">
+        {/* Content area: extra bottom padding on mobile for the fixed bottom navigation bar */}
+        <main className="flex-1 max-w-6xl w-full mx-auto p-4 sm:p-8 pb-24 md:pb-8 relative z-10">
           {activeTab === 'dates' ? (
             <DateList currentUser={user} />
           ) : activeTab === 'calendar' ? (
             <DateCalendar />
+          ) : activeTab === 'wishlist' ? (
+            <WishlistTab currentUser={user} />
           ) : (
             <LetterThread currentUser={user} />
           )}
         </main>
+
+        {/* Fixed Mobile Bottom Navigation */}
+        <MobileBottomNav
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          unreadCount={unreadCount}
+        />
       </div>
     </ThemeProvider>
   );

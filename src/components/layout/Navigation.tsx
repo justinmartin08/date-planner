@@ -5,19 +5,21 @@ import { useRouter } from 'next/navigation';
 import { useTheme } from './ThemeProvider';
 import { StrawberryEmblem, TigerPawEmblem, CoupleMark } from '../ui/Motifs';
 import { ProfileSettingsModal } from './ProfileSettingsModal';
-import { LogOut, Calendar, CalendarDays, Mail, Bell, User, Sun, Moon } from 'lucide-react';
+import { LogOut, Calendar, CalendarDays, Gift, Mail, Bell, User, Sun, Moon } from 'lucide-react';
 import { UserSession } from '@/lib/types';
+import { MainTabKey } from './MobileBottomNav';
 
 interface NavigationProps {
-  activeTab: 'dates' | 'letters' | 'calendar';
-  setActiveTab: (tab: 'dates' | 'letters' | 'calendar') => void;
+  activeTab: MainTabKey;
+  setActiveTab: (tab: MainTabKey) => void;
   unreadCount?: number;
   onUserUpdate?: (user: UserSession) => void;
 }
 
-const TABS: { key: 'dates' | 'letters' | 'calendar'; label: string; icon: typeof Calendar }[] = [
+const TABS: { key: MainTabKey; label: string; icon: typeof Calendar }[] = [
   { key: 'dates', label: 'Dates', icon: Calendar },
   { key: 'calendar', label: 'Calendar', icon: CalendarDays },
+  { key: 'wishlist', label: 'Wishlist', icon: Gift },
   { key: 'letters', label: 'Letters', icon: Mail },
 ];
 
@@ -53,15 +55,15 @@ export function Navigation({
 
   return (
     <>
-      <header className="sticky top-0 z-40 backdrop-blur-xl bg-[var(--bg-main)]/75 border-b border-[var(--border-color)] px-4 py-3 sm:px-8">
-        <div className="max-w-6xl mx-auto flex items-center justify-between gap-3">
-          {/* Identity + crown */}
+      <header className="sticky top-0 z-40 backdrop-blur-xl bg-[var(--bg-main)]/80 border-b border-[var(--border-color)] px-4 py-2.5 sm:px-8 transition-colors">
+        <div className="max-w-6xl mx-auto flex items-center justify-between gap-2 sm:gap-4">
+          {/* Identity + couple mark */}
           <button
             onClick={() => setIsSettingsOpen(true)}
-            className="flex items-center gap-3 min-w-0 group hover:opacity-95 transition-opacity text-left"
+            className="flex items-center gap-2.5 sm:gap-3 min-w-0 group hover:opacity-95 transition-opacity text-left cursor-pointer"
             title="Manage profile & settings"
           >
-            <div className="relative w-10 h-10 rounded-full overflow-hidden bg-[var(--badge-bg)] border border-[var(--accent)] flex items-center justify-center shrink-0 shadow-sm transition-transform group-hover:scale-105">
+            <div className="relative w-9 h-9 sm:w-10 sm:h-10 rounded-full overflow-hidden bg-[var(--badge-bg)] border border-[var(--accent)] flex items-center justify-center shrink-0 shadow-sm transition-transform group-hover:scale-105">
               {user.avatarUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={user.avatarUrl} alt={user.displayName} className="w-full h-full object-cover rounded-full" />
@@ -75,8 +77,8 @@ export function Navigation({
                 <span className="absolute -top-0.5 -right-0.5 w-3 h-3 rounded-full bg-[var(--berry)] border-2 border-[var(--bg-main)] animate-breathe" />
               )}
             </div>
-            <div className="min-w-0 hidden sm:block">
-              <h1 className="font-semibold text-sm leading-tight tracking-tight text-[var(--text-primary)] group-hover:text-[var(--accent)] transition-colors truncate">
+            <div className="min-w-0">
+              <h1 className="font-semibold text-xs sm:text-sm leading-tight tracking-tight text-[var(--text-primary)] group-hover:text-[var(--accent)] transition-colors truncate">
                 {user.displayName}
               </h1>
               <div className="text-[10px] text-[var(--text-muted)] flex items-center gap-1">
@@ -85,13 +87,13 @@ export function Navigation({
             </div>
           </button>
 
-          {/* Sliding pill tabs */}
-          <nav className="relative flex items-center bg-[var(--bg-card)] p-1 rounded-2xl border border-[var(--border-color)]">
+          {/* Desktop / Tablet Sliding pill tabs */}
+          <nav className="hidden md:flex relative items-center bg-[var(--bg-card)] p-1 rounded-2xl border border-[var(--border-color)] shadow-sm">
             <span
               className="absolute top-1 bottom-1 rounded-xl transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]"
               style={{
-                left: `calc(${activeIndex} * (100% / 3))`,
-                width: 'calc(100% / 3)',
+                left: `calc(${activeIndex} * (100% / ${TABS.length}))`,
+                width: `calc(100% / ${TABS.length})`,
                 background: 'var(--accent)',
                 boxShadow: '0 6px 18px -4px var(--accent-glow)',
               }}
@@ -100,14 +102,14 @@ export function Navigation({
               <button
                 key={key}
                 onClick={() => setActiveTab(key)}
-                className={`relative flex items-center justify-center gap-1.5 px-3 sm:px-4 py-2 rounded-xl text-sm font-medium transition-colors duration-200 z-10 ${
+                className={`relative flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-colors duration-200 z-10 cursor-pointer ${
                   activeTab === key ? 'text-white' : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
                 }`}
               >
                 <Icon className="w-4 h-4" />
-                <span className="hidden sm:inline">{label}</span>
+                <span>{label}</span>
                 {key === 'letters' && unreadCount > 0 && (
-                  <span className="ml-0.5 min-w-[1.05rem] px-1 py-0.5 text-[10px] leading-none font-bold bg-white text-[var(--accent)] rounded-full text-center">
+                  <span className="ml-1 min-w-[1.1rem] px-1 py-0.5 text-[10px] leading-none font-bold bg-white text-[var(--accent)] rounded-full text-center shadow-sm">
                     {unreadCount}
                   </span>
                 )}
@@ -116,14 +118,15 @@ export function Navigation({
           </nav>
 
           {/* Controls */}
-          <div className="flex items-center gap-1.5 shrink-0">
+          <div className="flex items-center gap-1 sm:gap-1.5 shrink-0">
             <button
               onClick={toggleMode}
-              className="p-2 rounded-xl bg-[var(--bg-chip)] hover:bg-[var(--bg-chip-hover)] text-[var(--text-muted)] hover:text-[var(--accent)] transition-colors"
+              className="p-2 rounded-xl bg-[var(--bg-chip)] hover:bg-[var(--bg-chip-hover)] text-[var(--text-muted)] hover:text-[var(--accent)] transition-colors cursor-pointer"
               title={mode === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
             >
               {mode === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
             </button>
+
             <button
               onClick={() => {
                 if (typeof window !== 'undefined' && 'Notification' in window) {
@@ -136,25 +139,27 @@ export function Navigation({
                   });
                 }
               }}
-              className="p-2 rounded-xl bg-[var(--bg-chip)] hover:bg-[var(--bg-chip-hover)] text-[var(--text-muted)] hover:text-[var(--accent)] transition-colors"
+              className="p-2 rounded-xl bg-[var(--bg-chip)] hover:bg-[var(--bg-chip-hover)] text-[var(--text-muted)] hover:text-[var(--accent)] transition-colors cursor-pointer hidden sm:flex"
               title="Enable Device Notifications"
             >
               <Bell className="w-4 h-4" />
             </button>
+
             <button
               onClick={() => setIsSettingsOpen(true)}
-              className="p-2 rounded-xl bg-[var(--bg-chip)] hover:bg-[var(--bg-chip-hover)] text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors"
+              className="p-2 rounded-xl bg-[var(--bg-chip)] hover:bg-[var(--bg-chip-hover)] text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors cursor-pointer"
               title="Profile & Settings"
             >
               <User className="w-4 h-4" />
             </button>
+
             <button
               onClick={handleLogout}
-              className="flex items-center gap-2 text-xs sm:text-sm font-medium text-[var(--text-muted)] hover:text-[var(--berry)] px-2.5 py-2 rounded-xl hover:bg-[var(--berry-soft)] transition-colors"
+              className="flex items-center gap-1.5 text-xs sm:text-sm font-medium text-[var(--text-muted)] hover:text-rose-500 p-2 sm:px-2.5 sm:py-2 rounded-xl hover:bg-rose-500/10 transition-colors cursor-pointer"
               title="Log out"
             >
               <LogOut className="w-4 h-4" />
-              <span className="hidden md:inline">Logout</span>
+              <span className="hidden sm:inline">Logout</span>
             </button>
           </div>
         </div>

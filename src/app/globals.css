@@ -11,6 +11,10 @@
 :root {
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-spring: cubic-bezier(0.34, 1.3, 0.64, 1);
+  --sab: env(safe-area-inset-bottom, 0px);
+  --sat: env(safe-area-inset-top, 0px);
+  --sal: env(safe-area-inset-left, 0px);
+  --sar: env(safe-area-inset-right, 0px);
 
   @apply antialiased;
 }
@@ -577,4 +581,105 @@ body {
 .field:focus ~ label,
 .field:focus + label {
   animation: labelFlicker 1.2s ease-in-out infinite;
+}
+
+/* ==========================================================================
+   Mobile Bottom Sheet & Dialog Animations
+   Transforms desktop centered modals into smooth swipe-like sheets on phones.
+   ========================================================================== */
+
+@keyframes sheetSlideUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0.7;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes sheetFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal-backdrop-anim {
+  animation: sheetFadeIn 0.25s var(--ease-out);
+}
+
+.mobile-sheet-anim {
+  animation: sheetSlideUp 0.35s var(--ease-spring);
+}
+
+@media (min-width: 640px) {
+  .mobile-sheet-anim {
+    animation: riseIn 0.3s var(--ease-spring);
+  }
+}
+
+/* Safe area padding utilities */
+.pb-safe {
+  padding-bottom: max(1rem, var(--sab));
+}
+
+.pt-safe {
+  padding-top: max(0.75rem, var(--sat));
+}
+
+.mb-safe-nav {
+  margin-bottom: calc(4.5rem + var(--sab));
+}
+
+/* Star rating pulse */
+@keyframes starPop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.35) rotate(15deg); }
+  100% { transform: scale(1); }
+}
+
+.star-bounce:active {
+  animation: starPop 0.35s var(--ease-spring);
+}
+
+/* Confetti Sparkles */
+@keyframes confettiFall {
+  0% {
+    transform: translateY(-20px) rotate(0deg) scale(0.8);
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh) rotate(720deg) scale(0.4);
+    opacity: 0;
+  }
+}
+
+.confetti-piece {
+  position: fixed;
+  top: -20px;
+  pointer-events: none;
+  z-index: 100;
+  animation: confettiFall 3s linear forwards;
+}
+
+/* Secret Claim Badge shimmer */
+@keyframes secretShimmer {
+  0%, 100% { opacity: 0.85; border-color: rgba(251, 61, 109, 0.3); }
+  50% { opacity: 1; border-color: rgba(251, 61, 109, 0.7); box-shadow: 0 0 16px rgba(251, 61, 109, 0.25); }
+}
+
+.secret-badge {
+  animation: secretShimmer 2.5s ease-in-out infinite;
+}
+
+/* Glassmorphic card polish */
+.glass-panel {
+  background: var(--bg-card);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-soft);
 }

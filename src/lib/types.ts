@@ -65,3 +65,47 @@ export interface MessageItem {
   readAt?: string | null;
   createdAt: string;
 }
+
+export type WishlistStatus = 'ACTIVE' | 'CLAIMED' | 'GRANTED';
+
+export interface WishlistItem {
+  id: string;
+  title: string;
+  description?: string | null;
+  url?: string | null;
+  price?: number | null;
+  currency: string;
+  category: string;
+  priority: number; // 1, 2, or 3
+  imageUrl?: string | null;
+  status: WishlistStatus;
+  ownerId: string;
+  owner: {
+    id: string;
+    username: string;
+    displayName: string;
+    avatarUrl?: string | null;
+    theme: UserTheme;
+  };
+  creatorId: string;
+  creator: {
+    id: string;
+    username: string;
+    displayName: string;
+    avatarUrl?: string | null;
+    theme: UserTheme;
+  };
+  claimedById?: string | null;
+  claimedBy?: {
+    id: string;
+    username: string;
+    displayName: string;
+    avatarUrl?: string | null;
+  } | null;
+  claimedAt?: string | null;
+  grantedAt?: string | null;
+  grantedNotes?: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
