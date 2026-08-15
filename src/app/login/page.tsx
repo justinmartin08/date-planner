@@ -235,7 +235,7 @@ export default function LoginPage() {
                   <input
                     type="text"
                     required
-                    placeholder="e.g. Cielo, Yani"
+                    placeholder="Enter display name"
                     value={displayName}
                     onChange={(e) => setDisplayName(e.target.value)}
                     className="w-full pl-10 pr-4 py-3 rounded-2xl bg-white/5 border border-white/10 text-white placeholder:text-slate-500 text-sm focus:outline-none focus:border-sky-400 focus:ring-2 focus:ring-sky-500/20 transition-all"
@@ -257,7 +257,7 @@ export default function LoginPage() {
                   type="text"
                   required
                   autoComplete="username"
-                  placeholder="cielo or yani"
+                  placeholder="Enter username"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   className="w-full pl-10 pr-4 py-3 rounded-2xl bg-white/5 border border-white/10 text-white placeholder:text-slate-500 text-sm focus:outline-none focus:border-sky-400 focus:ring-2 focus:ring-sky-500/20 transition-all"
